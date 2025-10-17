@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace MaintenancePortal.Models;
 
@@ -50,6 +49,7 @@ public class Label
     /// <summary>
     /// Gets or sets the user who created the associated label.
     /// </summary>
+    /// <remarks>This is a navigation property.</remarks>
     public required User CreatedByUser { get; set; }
 
     /// <summary>
