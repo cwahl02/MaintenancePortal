@@ -47,7 +47,7 @@ public class Issue
     /// Gets or sets the user who created the associated entity.
     /// </summary>
     /// <remarks>This is a navigation property.</remarks>
-    public User CreatedByUser { get; set; } = null!;
+    public required User CreatedByUser { get; set; }
 
     /// <summary>
     /// Gets the display identifier for the current object, formatted as a hexadecimal string combining the parent and
