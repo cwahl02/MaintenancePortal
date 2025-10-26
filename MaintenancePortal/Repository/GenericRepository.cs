@@ -85,6 +85,20 @@ public class GenericRepository
     }
 
     /// <summary>
+    /// Retrieves all entities of the specified type from the database.
+    /// </summary>
+    /// <remarks>The type parameter <typeparamref name="T"/> must correspond to a valid entity type  that is
+    /// mapped in the database context.</remarks>
+    /// <typeparam name="T">The type of the entities to retrieve. Must be a reference type.</typeparam>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing all entities of the specified type.  Returns an empty collection if
+    /// no entities are found.</returns>
+    public IEnumerable<T> GetAll<T>() where T : class
+    {
+        IsAllowed<T>();
+        return _context.Set<T>().ToList();
+    }
+
+    /// <summary>
     /// Updates the specified entity in the database and saves the changes.
     /// </summary>
     /// <remarks>This method updates the state of the provided entity in the database context and persists the
