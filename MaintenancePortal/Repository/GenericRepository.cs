@@ -118,6 +118,20 @@ public class GenericRepository
     }
 
     /// <summary>
+    /// Deletes the specified entity from the database.
+    /// </summary>
+    /// <remarks>This method removes the specified entity from the database context and persists the changes.
+    /// Ensure that the entity is tracked by the context before calling this method.</remarks>
+    /// <typeparam name="T">The type of the entity to delete. Must be a reference type.</typeparam>
+    /// <param name="entity">The entity to delete. Cannot be <see langword="null"/>.</param>
+    public void Delete<T>(T entity) where T : class
+    {
+        IsAllowed<T>();
+        _context.Set<T>().Remove(entity);
+        _context.SaveChanges();
+    }
+
+    /// <summary>
     /// Deletes the specified entity from the database asynchronously.
     /// </summary>
     /// <remarks>This method removes the specified entity from the database context and persists the changes
