@@ -85,6 +85,22 @@ public class GenericRepository
     }
 
     /// <summary>
+    /// Updates the specified entity in the database and saves the changes.
+    /// </summary>
+    /// <remarks>This method updates the state of the provided entity in the database context and persists the
+    /// changes. Ensure that the entity is tracked by the context before calling this method.</remarks>
+    /// <typeparam name="T">The type of the entity to update. Must be a reference type.</typeparam>
+    /// <param name="entity">The entity to update. Cannot be <see langword="null"/>.</param>
+    /// <returns>The updated entity.</returns>
+    public T? Update<T>(T entity) where T : class
+    {
+        IsAllowed<T>();
+        _context.Set<T>().Update(entity);
+        _context.SaveChanges();
+        return entity;
+    }
+
+    /// <summary>
     /// Updates the specified entity in the database and saves the changes asynchronously.
     /// </summary>
     /// <remarks>This method updates the state of the provided entity to "Modified" in the database context
