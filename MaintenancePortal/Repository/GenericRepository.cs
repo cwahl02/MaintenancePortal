@@ -4,19 +4,19 @@ using System.Linq.Expressions;
 
 namespace MaintenancePortal.Repository;
 
-public class Repository
+public class GenericRepository
 {
     private readonly AppDbContext _context;
     private readonly HashSet<Type> _allowedTypes = new();
 
     private bool _configLock = false;
 
-    public Repository(AppDbContext context)
+    public GenericRepository(AppDbContext context)
     {
         _context = context;
     }
 
-    public Repository(AppDbContext context, IEnumerable<Type> allowedTypes)
+    public GenericRepository(AppDbContext context, IEnumerable<Type> allowedTypes)
     {
         _context = context;
         foreach (var type in allowedTypes)
