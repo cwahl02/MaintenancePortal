@@ -99,6 +99,21 @@ public class GenericRepository
     }
 
     /// <summary>
+    /// Retrieves all entities of the specified type from the database asynchronously.
+    /// </summary>
+    /// <remarks>This method uses Entity Framework Core to query the database and retrieve all entities of the
+    /// specified type. Ensure that the type <typeparamref name="T"/> is part of the current database 
+    /// context.</remarks>
+    /// <typeparam name="T">The type of the entities to retrieve. Must be a reference type.</typeparam>
+    /// <returns>A task that represents the asynchronous operation. The task result contains an  IEnumerable{T} of all entities
+    /// of the specified type. If no entities are found,  the result is an empty collection.</returns>
+    public async Task<IEnumerable<T>> GetAllAsync<T>() where T : class
+    {
+        IsAllowed<T>();
+        return await _context.Set<T>().ToListAsync();
+    }
+
+    /// <summary>
     /// Updates the specified entity in the database and saves the changes.
     /// </summary>
     /// <remarks>This method updates the state of the provided entity in the database context and persists the
