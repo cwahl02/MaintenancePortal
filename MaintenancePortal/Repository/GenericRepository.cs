@@ -64,15 +64,24 @@ public class GenericRepository
     }
 
     /// <summary>
-    /// Retrieves a queryable collection of entities of the specified type.
+    /// Retrieves a queryable collection of entities of the specified type, optionally filtered by a predicate.
     /// </summary>
-    /// <remarks>This method provides access to the underlying data set for the specified entity type.  Ensure
-    /// that the caller has the necessary permissions to access the entity type.</remarks>
-    /// <typeparam name="T">The type of the entity to query. Must be a reference type.</typeparam>
-    /// <returns>An <see cref="IQueryable{T}"/> representing the collection of entities of type <typeparamref name="T"/>.</returns>
-    public IQueryable<T> Query<T>() where T : class {
+    /// <remarks>This method ensures that the caller has permission to query the specified entity type. The
+    /// returned queryable can be used to perform additional filtering, sorting, or projection operations before
+    /// execution.</remarks>
+    /// <typeparam name="T">The type of the entities to query. Must be a reference type.</typeparam>
+    /// <param name="predicate">An optional expression used to filter the entities. If <see langword="null"/>, no filtering is applied.</param>
+    /// <returns>An <see cref="IQueryable{T}"/> representing the queryable collection of entities. The result may be further
+    /// modified or executed to retrieve data.</returns>
+    public IQueryable<T> Query<T>(Expression<Func<T, bool>>? predicate = null) where T : class
+    {
         IsAllowed<T>();
-        return _context.Set<T>();
+        var query = _context.Set<T>();
+        if(query != null)
+        {
+            query.Where(predicate!);
+        }
+        return query!;
     }
 
     /// <summary>
