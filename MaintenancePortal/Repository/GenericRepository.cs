@@ -34,6 +34,20 @@ public class GenericRepository
      ******************/
 
     /// <summary>
+    /// Creates a new entity in the database.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="entity"></param>
+    /// <returns></returns>
+    public T? Create<T>(T entity) where T : class
+    {
+        IsAllowed<T>();
+        _context.Set<T>().Add(entity);
+        _context.SaveChanges();
+        return entity;
+    }
+
+    /// <summary>
     /// Asynchronously creates a new entity in the database.
     /// </summary>
     /// <remarks>The entity is added to the database context and persisted to the database upon calling  <see
