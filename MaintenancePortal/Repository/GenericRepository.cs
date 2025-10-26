@@ -114,6 +114,19 @@ public class GenericRepository
     }
 
     /// <summary>
+    /// Retrieves a collection of entities that satisfy the specified predicate.
+    /// </summary>
+    /// <typeparam name="T">The type of the entity to query. Must be a reference type.</typeparam>
+    /// <param name="predicate">An expression that defines the conditions the entities must meet.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing the entities that match the specified predicate. If no entities
+    /// match, an empty collection is returned.</returns>
+    public IEnumerable<T> Find<T>(Expression<Func<T, bool>> predicate) where T : class
+    {
+        IsAllowed<T>();
+        return _context.Set<T>().Where(predicate).ToList();
+    }
+
+    /// <summary>
     /// Updates the specified entity in the database and saves the changes.
     /// </summary>
     /// <remarks>This method updates the state of the provided entity in the database context and persists the
