@@ -34,6 +34,20 @@ public class GenericRepository
      ******************/
 
     /// <summary>
+    /// Creates a new entity in the database.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="entity"></param>
+    /// <returns></returns>
+    public T? Create<T>(T entity) where T : class
+    {
+        IsAllowed<T>();
+        _context.Set<T>().Add(entity);
+        _context.SaveChanges();
+        return entity;
+    }
+
+    /// <summary>
     /// Asynchronously creates a new entity in the database.
     /// </summary>
     /// <remarks>The entity is added to the database context and persisted to the database upon calling  <see
@@ -50,15 +64,88 @@ public class GenericRepository
     }
 
     /// <summary>
-    /// Retrieves a queryable collection of entities of the specified type.
+    /// Retrieves a queryable collection of entities of the specified type, optionally filtered by a predicate.
     /// </summary>
-    /// <remarks>This method provides access to the underlying data set for the specified entity type.  Ensure
-    /// that the caller has the necessary permissions to access the entity type.</remarks>
-    /// <typeparam name="T">The type of the entity to query. Must be a reference type.</typeparam>
-    /// <returns>An <see cref="IQueryable{T}"/> representing the collection of entities of type <typeparamref name="T"/>.</returns>
-    public IQueryable<T> Query<T>() where T : class {
+    /// <remarks>This method ensures that the caller has permission to query the specified entity type. The
+    /// returned queryable can be used to perform additional filtering, sorting, or projection operations before
+    /// execution.</remarks>
+    /// <typeparam name="T">The type of the entities to query. Must be a reference type.</typeparam>
+    /// <param name="predicate">An optional expression used to filter the entities. If <see langword="null"/>, no filtering is applied.</param>
+    /// <returns>An <see cref="IQueryable{T}"/> representing the queryable collection of entities. The result may be further
+    /// modified or executed to retrieve data.</returns>
+    public IQueryable<T> Query<T>(Expression<Func<T, bool>>? predicate = null) where T : class
+    {
         IsAllowed<T>();
-        return _context.Set<T>();
+        var query = _context.Set<T>();
+        if(query != null)
+        {
+            query.Where(predicate!);
+        }
+        return query!;
+    }
+
+    /// <summary>
+    /// Retrieves all entities of the specified type from the database.
+    /// </summary>
+    /// <remarks>The type parameter <typeparamref name="T"/> must correspond to a valid entity type  that is
+    /// mapped in the database context.</remarks>
+    /// <typeparam name="T">The type of the entities to retrieve. Must be a reference type.</typeparam>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing all entities of the specified type.  Returns an empty collection if
+    /// no entities are found.</returns>
+    public IEnumerable<T> GetAll<T>() where T : class
+    {
+        IsAllowed<T>();
+        return _context.Set<T>().ToList();
+    }
+
+    /// <summary>
+    /// Retrieves all entities of the specified type from the database asynchronously.
+    /// </summary>
+    /// <remarks>This method uses Entity Framework Core to query the database and retrieve all entities of the
+    /// specified type. Ensure that the type <typeparamref name="T"/> is part of the current database 
+    /// context.</remarks>
+    /// <typeparam name="T">The type of the entities to retrieve. Must be a reference type.</typeparam>
+    /// <returns>A task that represents the asynchronous operation. The task result contains an  IEnumerable{T} of all entities
+    /// of the specified type. If no entities are found,  the result is an empty collection.</returns>
+    public async Task<IEnumerable<T>> GetAllAsync<T>() where T : class
+    {
+        IsAllowed<T>();
+        return await _context.Set<T>().ToListAsync();
+    }
+
+    /// <summary>
+    /// Retrieves a collection of entities that satisfy the specified predicate.
+    /// </summary>
+    /// <typeparam name="T">The type of the entity to query. Must be a reference type.</typeparam>
+    /// <param name="predicate">An expression that defines the conditions the entities must meet.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing the entities that match the specified predicate. If no entities
+    /// match, an empty collection is returned.</returns>
+    public IEnumerable<T> Find<T>(Expression<Func<T, bool>> predicate) where T : class
+    {
+        IsAllowed<T>();
+        return _context.Set<T>().Where(predicate).ToList();
+    }
+
+    public async Task<IEnumerable<T>> FindAsync<T>(Expression<Func<T, bool>> predicate) where T : class
+    {
+        IsAllowed<T>();
+        return await _context.Set<T>().Where(predicate).ToListAsync();
+    }
+
+    /// <summary>
+    /// Updates the specified entity in the database and saves the changes.
+    /// </summary>
+    /// <remarks>This method updates the state of the provided entity in the database context and persists the
+    /// changes. Ensure that the entity is tracked by the context before calling this method.</remarks>
+    /// <typeparam name="T">The type of the entity to update. Must be a reference type.</typeparam>
+    /// <param name="entity">The entity to update. Cannot be <see langword="null"/>.</param>
+    /// <returns>The updated entity.</returns>
+    public T? Update<T>(T entity) where T : class
+    {
+        IsAllowed<T>();
+        _context.Set<T>().Update(entity);
+        _context.SaveChanges();
+        return entity;
     }
 
     /// <summary>
@@ -76,6 +163,20 @@ public class GenericRepository
         _context.Set<T>().Update(entity);
         await _context.SaveChangesAsync();
         return entity;
+    }
+
+    /// <summary>
+    /// Deletes the specified entity from the database.
+    /// </summary>
+    /// <remarks>This method removes the specified entity from the database context and persists the changes.
+    /// Ensure that the entity is tracked by the context before calling this method.</remarks>
+    /// <typeparam name="T">The type of the entity to delete. Must be a reference type.</typeparam>
+    /// <param name="entity">The entity to delete. Cannot be <see langword="null"/>.</param>
+    public void Delete<T>(T entity) where T : class
+    {
+        IsAllowed<T>();
+        _context.Set<T>().Remove(entity);
+        _context.SaveChanges();
     }
 
     /// <summary>
