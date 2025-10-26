@@ -126,6 +126,12 @@ public class GenericRepository
         return _context.Set<T>().Where(predicate).ToList();
     }
 
+    public async Task<IEnumerable<T>> FindAsync<T>(Expression<Func<T, bool>> predicate) where T : class
+    {
+        IsAllowed<T>();
+        return await _context.Set<T>().Where(predicate).ToListAsync();
+    }
+
     /// <summary>
     /// Updates the specified entity in the database and saves the changes.
     /// </summary>
