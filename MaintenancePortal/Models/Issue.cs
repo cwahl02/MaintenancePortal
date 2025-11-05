@@ -6,16 +6,16 @@ namespace MaintenancePortal.Models;
 public class Issue
 {
     /// <summary>
-    /// Gets or sets the identifier of the parent gene.
+    /// Gets or sets the unique identifier for the entity.
     /// </summary>
-    [Required]
-    public ushort ParentGene { get; set; }
+    [Required, Key]
+    public ushort Id { get; set; }
 
     /// <summary>
-    /// Gets or sets the identifier representing the self-gene of the entity.
+    /// Gets or sets the identifier of the parent entity.
     /// </summary>
     [Required]
-    public ushort SelfGene { get; set; }
+    public ushort ParentId { get; set; }
 
     /// <summary>
     /// Gets or sets the title of the entity.
@@ -28,6 +28,12 @@ public class Issue
     /// </summary>
     [Required, MaxLength(2048)]
     public required string Description { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating the current status of the operation.
+    /// </summary>
+    [Required]
+    public required bool Status { get; set; }
 
     /// <summary>
     /// Gets or sets the date and time when the entity was created.
@@ -47,6 +53,7 @@ public class Issue
     /// Gets or sets the user who created the associated entity.
     /// </summary>
     /// <remarks>This is a navigation property.</remarks>
+    [Required]
     public required User CreatedByUser { get; set; }
 
     /// <summary>
@@ -54,7 +61,7 @@ public class Issue
     /// self gene values.
     /// </summary>
     [NotMapped]
-    public string DisplayId => $"{ParentGene:X4}-{SelfGene:X4}";
+    public string DisplayId => $"{ParentId:X4}-{Id:X4}";
 
     /// <summary>
     /// Gets or sets the collection of labels associated with the issue.
