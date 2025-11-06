@@ -9,13 +9,13 @@ public class IssueConfiguration : IEntityTypeConfiguration<Issue>
     public void Configure(EntityTypeBuilder<Issue> builder)
     {
         // Composite primary key on ParentGene and SelfGene
-        builder.HasKey(i => new { i.ParentGene, i.SelfGene });
+        builder.HasKey(i => new { i.ParentId, i.Id });
 
         // Index on ParentGene for faster lookups
-        builder.HasIndex(i => i.ParentGene);
+        builder.HasIndex(i => i.ParentId);
 
         // Index on SelfGene for faster lookups
-        builder.HasIndex(i => i.SelfGene);
+        builder.HasIndex(i => i.Id);
 
         // Unique constraint on Title and CreatedByUserId
         builder
