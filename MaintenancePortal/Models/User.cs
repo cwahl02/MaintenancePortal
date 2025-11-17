@@ -48,7 +48,7 @@ public class User : IdentityUser
     /// <summary>
     /// Gets or sets the collection of issues created by the user.
     /// </summary>
-    public ICollection<Issue> CreatedIssues { get; set; } = new HashSet<Issue>();
+    public ICollection<Ticket> CreatedIssues { get; set; } = new HashSet<Ticket>();
 
     /// <summary>
     /// Gets or sets the collection of labels created by the user.

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MaintenancePortal.Models;
 
-public class Issue
+public class Ticket
 {
     /// <summary>
     /// Gets or sets the unique identifier for the entity.
@@ -14,8 +14,7 @@ public class Issue
     /// <summary>
     /// Gets or sets the identifier of the parent entity.
     /// </summary>
-    [Required]
-    public ushort ParentId { get; set; }
+    public ushort? ParentId { get; set; }
 
     /// <summary>
     /// Gets or sets the title of the entity.
@@ -47,24 +46,17 @@ public class Issue
     /// </summary>
     [ForeignKey("CreatedByUser")]
     [Required]
-    public required string CreatedByUserId { get; set; }
+    public required string CreatedById { get; set; }
 
     /// <summary>
     /// Gets or sets the user who created the associated entity.
     /// </summary>
     /// <remarks>This is a navigation property.</remarks>
     [Required]
-    public required User CreatedByUser { get; set; }
-
-    /// <summary>
-    /// Gets the display identifier for the current object, formatted as a hexadecimal string combining the parent and
-    /// self gene values.
-    /// </summary>
-    [NotMapped]
-    public string DisplayId => $"{ParentId:X4}-{Id:X4}";
+    public required User CreatedBy { get; set; }
 
     /// <summary>
     /// Gets or sets the collection of labels associated with the issue.
     /// </summary>
-    public ICollection<IssueLabel> IssueLabels { get; set; } = new HashSet<IssueLabel>();
+    public ICollection<TicketLabels> TicketLabels { get; set; } = new HashSet<TicketLabels>();
 }

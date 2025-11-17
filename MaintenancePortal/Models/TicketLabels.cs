@@ -2,17 +2,17 @@
 
 namespace MaintenancePortal.Models;
 
-public class IssueLabel
+public class TicketLabels
 {
     /// <summary>
     /// Gets or sets the unique identifier for a gene.
     /// </summary>
-    public ushort ParentGene { get; set; }
+    public ushort Id { get; set; }
 
     /// <summary>
-    /// Gets or sets the identifier representing the self gene of the entity.
+    /// Gets or sets the identifier representing the parent id of the entity.
     /// </summary>
-    public ushort SelfGene { get; set; }
+    public ushort ParentId { get; set; }
 
     /// <summary>
     /// Gets or sets the unique identifier for the label.
@@ -23,7 +23,7 @@ public class IssueLabel
     /// <summary>
     /// Gets or sets the issue associated with the current context.
     /// </summary>
-    public Issue Issue { get; set; } = null!;
+    public Ticket Ticket { get; set; } = null!;
 
     /// <summary>
     /// Gets or sets the label associated with this instance.
