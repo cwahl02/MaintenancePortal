@@ -1,0 +1,29 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@model Ticket
+
+<section class="TicketCard-Container">
+    <div class="TicketCard-Selection">
+        <input type="checkbox" />
+    </div>
+    <div class="TicketCard-Status">
+        <span>@Model.Status</span>
+    </div>
+    <div class="TicketCard-Primary">
+        <span>@Model.Title</span>
+    </div>
+    <div class="TicketCard-Secondary">
+        <span>@Model.Id</span>
+        @if(Model.ParentId != null)
+        {
+            <span>@Model.ParentId</span>
+        }
+        <!-- TODO: Implement redirect to user's profile -->
+        <a asp-controller="Users" asp-action="">@Model.CreatedBy.UserName</a>
+        <span>@Model.CreatedAt.ToString("g")</span>
+    </div>
+</section>
