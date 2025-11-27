@@ -6,24 +6,9 @@ namespace MaintenancePortal.Models;
 
 public class User : IdentityUser
 {
-    /// <summary>
-    /// Gets or sets the first name of the individual.
-    /// </summary>
-    [Required, MaxLength(128)]
-    public required string FirstName { get; set; }
-
-    /// <summary>
-    /// Gets or sets the last name of the individual.
-    /// </summary>
-    [Required, MaxLength(128)]
-    public required string LastName { get; set; }
-
-    /// <summary>
-    /// Gets or sets the birth date of the individual.
-    /// </summary>
-    [Required]
-    [Column(TypeName = "date")]
-    public required DateTime BirthDate { get; set; }
+    public string? FirstName { get; set; }
+    public string? LastName { get; set; }
+    public DateTime? BirthDate { get; set; }
 
     /// <summary>
     /// Display full name of the user.
@@ -39,19 +24,12 @@ public class User : IdentityUser
         get
         {
             var today = DateTime.Today;
-            var age = today.Year - BirthDate.Year;
-            if (BirthDate.Date > today.AddYears(-age)) age--;
+            var age = today.Year - BirthDate!.Value.Year;
+            if (BirthDate.Value.Date > today.AddYears(-age)) age--;
             return age;
         }
     }
 
-    /// <summary>
-    /// Gets or sets the collection of issues created by the user.
-    /// </summary>
     public ICollection<Issue> CreatedIssues { get; set; } = new HashSet<Issue>();
-
-    /// <summary>
-    /// Gets or sets the collection of labels created by the user.
-    /// </summary>
     public ICollection<Label> CreatedLabels { get; set; } = new HashSet<Label>();
 }
