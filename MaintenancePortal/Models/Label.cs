@@ -55,5 +55,5 @@ public class Label
     /// <summary>
     /// Gets or sets the collection of labels associated with the issue.
     /// </summary>
-    public ICollection<IssueLabel> IssueLabels { get; set; } = new HashSet<IssueLabel>();
+    public ICollection<TicketLabel> IssueLabels { get; set; } = new HashSet<TicketLabel>();
 }
