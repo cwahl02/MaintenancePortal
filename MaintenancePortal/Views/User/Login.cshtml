@@ -1,0 +1,24 @@
+﻿@model LoginViewModel
+
+<h2>Login</h2>
+<form method="post">
+    <div>
+        <label asp-for="PrimaryIdentifier"></label>
+        <input asp-for="PrimaryIdentifier" />
+        <span asp-validation-for="PrimaryIdentifier"></span>
+    </div>
+    <div>
+        <label asp-for="Password"></label>
+        <input asp-for="Password" />
+        <span asp-validation-for="Password"></span>
+    </div>
+    <div>
+        <label asp-for="RememberMe"></label>
+        <input asp-for="RememberMe" type="checkbox" />
+    </div>
+    <button type="submit" formaction="/User/Login">Login</button>
+    <button type="submit" formaction="/User/Register">Register</button>
+</form>
+<div>
+    <a asp-controller="User" asp-action="Register">Register</a>
+</div>
