@@ -6,6 +6,7 @@ namespace MaintenancePortal.Models;
 
 public class User : IdentityUser
 {
+    public int Level { get; set; }
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public DateTime? BirthDate { get; set; }
@@ -30,6 +31,6 @@ public class User : IdentityUser
         }
     }
 
-    public ICollection<Issue> CreatedIssues { get; set; } = new HashSet<Issue>();
+    public ICollection<Ticket> CreatedIssues { get; set; } = new HashSet<Ticket>();
     public ICollection<Label> CreatedLabels { get; set; } = new HashSet<Label>();
 }
