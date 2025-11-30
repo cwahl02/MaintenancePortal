@@ -14,4 +14,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
         // Applies configurations
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
     }
+
+    public DbSet<Label> Labels { get; set; }
+    public DbSet<Ticket> Tickets { get; set; }
 }
