@@ -1,24 +1,31 @@
 ﻿@model LoginViewModel
 
-<h2>Login</h2>
-<form method="post">
-    <div>
-        <label asp-for="PrimaryIdentifier"></label>
-        <input asp-for="PrimaryIdentifier" />
-        <span asp-validation-for="PrimaryIdentifier"></span>
+<section>
+    <!-- Views/Account/Login.cshtml -->
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2 class="text-center mb-4">Login to Your Account</h2>
+            <form asp-controller="User" asp-action="Login" method="post">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group mb-3">
+                    <label for="EmailOrUsername" class="form-label">Email/Username</label>
+                    <input type="text" id="EmailOrUsername" name="EmailOrUsername" class="form-control" required autocomplete="username" />
+                    <span asp-validation-for="EmailOrUsername" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-4">
+                    <label for="Password" class="form-label">Password</label>
+                    <input type="password" id="Password" name="Password" class="form-control" required autocomplete="current-password" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="form-check mb-4">
+                    <input type="checkbox" id="RememberMe" name="RememberMe" class="form-check-input" />
+                    <label for="RememberMe" class="form-check-label">Remember Me</label>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Login</button>
+                <p class="text-center mt-3">
+                    Don't have an account? <a asp-controller="User" asp-action="Register">Register here</a>
+                </p>
+            </form>
+        </div>
     </div>
-    <div>
-        <label asp-for="Password"></label>
-        <input asp-for="Password" />
-        <span asp-validation-for="Password"></span>
-    </div>
-    <div>
-        <label asp-for="RememberMe"></label>
-        <input asp-for="RememberMe" type="checkbox" />
-    </div>
-    <button type="submit" formaction="/User/Login">Login</button>
-    <button type="submit" formaction="/User/Register">Register</button>
-</form>
-<div>
-    <a asp-controller="User" asp-action="Register">Register</a>
-</div>
+</section>
