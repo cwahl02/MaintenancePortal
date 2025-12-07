@@ -1,4 +1,4 @@
-﻿namespace QueryEngine.Models;
+﻿namespace MaintenancePortal.Models;
 
 public enum PageState
 {
@@ -64,61 +64,74 @@ public class PaginationMetadata
 
             // Case 2: Near the start (page 0 + window size)
             case PageState.Start:
-                // Show first few pages
-                for (int i = 1; i <= windowSize && i <= total; i++)
+                for(int i = 1; i < TotalPages + 1; i++)
                 {
                     pages.Add(i);
                 }
+                // Show first few pages
+                //for (int i = 1; i <= windowSize && i <= total; i++)
+                //{
+                //    pages.Add(i);
+                //}
 
-                // Show ellipses before the last pages if needed
-                if (total > windowSize + 2)
-                    pages.Add(-1); // Ellipses
+                //// Show ellipses before the last pages if needed
+                //if (total > windowSize + 2)
+                //    pages.Add(-1); // Ellipses
 
-                // Show last 2 pages
-                pages.Add(total - 1);
-                pages.Add(total);
+                //// Show last 2 pages
+                //pages.Add(total - 1);
+                //pages.Add(total);
                 break;
 
             // Case 3: Near the end (last pages)
             case PageState.End:
-                // Show first 2 pages
-                pages.Add(1);
-                pages.Add(2);
-
-                // Add ellipses after the first pages if needed
-                if (total - windowSize > 3)
-                    pages.Add(-1); // Ellipses
-
-                // Show the last few pages (window size)
-                for (int i = total - windowSize; i < total; i++)
+                for(int i = Current - (WindowSize / 2); i < TotalItems + 1; i++)
                 {
                     pages.Add(i);
                 }
+
+                // Show first 2 pages
+                //pages.Add(1);
+                //pages.Add(2);
+
+                //// Add ellipses after the first pages if needed
+                //if (total - windowSize > 3)
+                //    pages.Add(-1); // Ellipses
+
+                //// Show the last few pages (window size)
+                //for (int i = total - windowSize; i < total; i++)
+                //{
+                //    pages.Add(i);
+                //}
                 break;
 
             case PageState.Center:
-                // Show first 2 pages
-                pages.Add(1);
-                pages.Add(2);
-
-                // Add ellipses before the current window
-                if (current - windowSize > 3)
-                    pages.Add(-1); // Ellipses
-
-                // Show pages around the current page (window size)
-                for (int i = current - windowSize; i <= current + windowSize; i++)
+                for(int i = Current - (WindowSize / 2); i < Current + (WindowSize / 2) + 1; i++)
                 {
-                    if (i > 2 && i < total - 2)
-                        pages.Add(i);
+                    pages.Add(i);
                 }
+                // Show first 2 pages
+                //pages.Add(1);
+                //pages.Add(2);
 
-                // Add ellipses after the current window
-                if (current + windowSize < total - 3)
-                    pages.Add(-1); // Ellipses
+                //// Add ellipses before the current window
+                //if (current - windowSize > 3)
+                //    pages.Add(-1); // Ellipses
 
-                // Show the last 2 pages
-                pages.Add(total - 1);
-                pages.Add(total);
+                //// Show pages around the current page (window size)
+                //for (int i = current - windowSize; i <= current + windowSize; i++)
+                //{
+                //    if (i > 2 && i < total - 2)
+                //        pages.Add(i);
+                //}
+
+                //// Add ellipses after the current window
+                //if (current + windowSize < total - 3)
+                //    pages.Add(-1); // Ellipses
+
+                //// Show the last 2 pages
+                //pages.Add(total - 1);
+                //pages.Add(total);
                 break;
         }
 
