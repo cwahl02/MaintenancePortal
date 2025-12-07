@@ -1,10 +1,10 @@
 ﻿using MaintenancePortal.Data;
 using MaintenancePortal.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace MaintenancePortal.Controllers;
 
-[Route("tickets")]
 public class TicketController : Controller
 {
     private readonly AppDbContext _context;
@@ -14,7 +14,7 @@ public class TicketController : Controller
         _context = context;
     }
 
-    [HttpGet("")]
+    [HttpGet]
     public IActionResult Index(string? query = "", int page = 0, int pageSize = 10)
     {
         var _tickets = _context.Tickets.AsQueryable();
@@ -55,6 +55,7 @@ public class TicketController : Controller
 
         TicketListViewModel tickets = new TicketListViewModel
         {
+            Query = query,
             PaginationMetadata = paginationMetadata,
             Pagination = pagination,
             Tickets = _tickets.Skip(page * pageSize)
@@ -65,32 +66,57 @@ public class TicketController : Controller
         return View(tickets);
     }
 
-    [HttpGet("new")]
+    [HttpGet]
+    public IActionResult Details(int? id = null)
+    {
+        if (id == null)
+        {
+            return NotFound();
+        }
+
+        Ticket? ticket = _context.Tickets.Find(id);
+        if (ticket == null)
+        {
+            return NotFound();
+        }
+
+        return View(new TicketEditableViewModel()
+        {
+            Id = ticket.Id,
+            State = ticket.State,
+            Title = ticket.Title,
+            Description = ticket.Description,
+            CreatedAt = ticket.CreatedAt,
+            UpdatedAt = ticket.UpdatedAt
+        });
+    }
+
+    [HttpGet]
     public IActionResult Create()
     {
         return View();
     }
 
-    [HttpPost("new")]
-    public IActionResult Create(TicketModifyViewModel model)
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create(TicketModifyViewModel model)
     {
-        if (!ModelState.IsValid)
+        if (ModelState.IsValid)
         {
-            return View(model);
+            Ticket ticket = new Ticket()
+            {
+                Title = model.Title,
+                Description = model.Description,
+                State = "Open",
+                CreatedAt = DateTime.Now
+            };
+
+            _context.Tickets.Add(ticket);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
         }
 
-        Ticket newTicket = new Ticket()
-        {
-            Title = model.Title,
-            Description = model.Description,
-            State = "Open",
-            CreatedAt = DateTime.UtcNow
-        };
-
-        _context.Tickets.Add(newTicket);
-        _context.SaveChanges();
-
-        return RedirectToAction("Index");
+        return View(model);
     }
 
     [HttpGet("edit/{id}")]
@@ -111,7 +137,7 @@ public class TicketController : Controller
     }
 
     [HttpPost("edit/{id}")]
-    public IActionResult Edit(int id, TicketModifyViewModel model)
+    public IActionResult Edit(int id, TicketEditableViewModel model)
     {
         if (!ModelState.IsValid)
         {
@@ -131,7 +157,7 @@ public class TicketController : Controller
         _context.Tickets.Update(ticket);
         _context.SaveChanges();
 
-        return RedirectToAction("Index");
+        return RedirectToAction("Details", new { Id = model.Id });
     }
 
     [HttpPost]
