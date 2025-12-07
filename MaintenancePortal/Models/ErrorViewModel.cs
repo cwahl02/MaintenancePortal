@@ -1,4 +1,4 @@
-namespace MaintenancePortal.Models;
+﻿namespace MaintenancePortal.Models;
 
 public class ErrorViewModel
 {

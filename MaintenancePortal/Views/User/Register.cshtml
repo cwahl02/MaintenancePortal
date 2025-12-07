@@ -1,0 +1,56 @@
+﻿@model RegisterViewModel
+
+<section>
+    <!-- Views/Account/Register.cshtml -->
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2 class="text-center mb-4">Register New Account</h2>
+            <form asp-controller="User" asp-action="Register" method="post">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group mb-3">
+                    <label for="FirstName" class="form-label">First Name</label>
+                    <input type="text" id="FirstName" name="FirstName" class="form-control" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group mb-3">
+                    <label for="LastName" class="form-label">Last Name</label>
+                    <input type="text" id="LastName" name="LastName" class="form-control" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group mb-3">
+                    <label for="Username" class="form-label">Username</label>
+                    <input type="text" id="Username" name="Username" class="form-control" />
+                    <span asp-validation-for="Username" class="text-danger"></span>
+                </div>
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group mb-3">
+                    <label for="Birthdate" class="form-label">Birthdate</label>
+                    <input type="date" id="Birthdate" name="Birthdate" class="form-control" />
+                    <span asp-validation-for="Birthdate" class="text-danger"></span>
+                </div>
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group mb-3">
+                    <label for="Email" class="form-label">Email</label>
+                    <input type="email" id="Email" name="Email" class="form-control" required autocomplete="username" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="Password" class="form-label">Password</label>
+                    <input type="password" id="Password" name="Password" class="form-control" required autocomplete="new-password" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-4">
+                    <label for="ConfirmPassword" class="form-label">Confirm Password</label>
+                    <input type="password" id="ConfirmPassword" name="ConfirmPassword" class="form-control" required autocomplete="new-password" />
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Register</button>
+                <p class="text-center mt-3">
+                    Already have an account? <a asp-controller="User" asp-action="Login">Login here</a>
+                </p>
+            </form>
+        </div>
+    </div>
+</section>

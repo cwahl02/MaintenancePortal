@@ -1,0 +1,85 @@
+﻿@model TicketEditableViewModel
+
+<section>
+    <div class="card-body">
+        <!-- Ticket Header -->
+        <div id="ticketHeader">
+            <!-- This will be dynamically filled by JavaScript based on the editMode state -->
+        </div>
+    </div>
+
+    <hr />
+    <h5>Description</h5>
+    <div id="ticketDescription">
+
+    </div>
+</section>
+
+<script>
+    // Initialize editMode flag
+    var editMode = false;
+
+    // Function to toggle between edit and view mode
+    function toggleEditMode(mode) {
+        editMode = mode;
+
+        // Render content based on editMode state
+        var ticketHeader = document.getElementById('ticketHeader');
+        var ticketDescription = document.getElementById('ticketDescription');
+        if (editMode) {
+            ticketHeader.innerHTML = `
+                <div class="edit-mode d-flex">
+                    <input asp-for="Title" id="ticketTitle" type="text" class="form-control" value="@Model.Title" />
+                    <button class="btn btn-secondary mt-2" onclick="toggleEditMode(false)">Cancel</button>
+                    <button class="btn btn-primary mt-2" onclick="saveTicket()">Save</button>
+                </div>
+            `;
+            ticketDescription.innerHTML = `
+                <textarea asp-for="Description" rows="10">@Model.Description</textarea>
+            `;
+        } else {
+            ticketHeader.innerHTML = `
+                <div class="view-mode d-flex justify-content-between align-items-center">
+                    <h3>@Model.Title <span class="text-secondary fw-light">#@Model.Id</span></h3>
+                    <button class="btn btn-outline-primary" onclick="toggleEditMode(true)">Edit</button>
+                </div>
+            `;
+            ticketDescription.innerHTML = `
+                <p>@Model.Description</p>
+            `;
+        }
+    }
+
+    // Simulate saving the ticket
+    function saveTicket() {
+        var title = document.getElementById('ticketTitle').value;
+        
+        $.ajax({
+            url: '@Url.Action("Edit", "Ticket")',
+            type: 'POST',
+            data: { title: title },
+            success: function (response) {
+                if (response.success) {
+                    toggleEditMode = false;
+                }
+            },
+            error: function () {
+
+            }
+        });
+
+        // After saving, toggle back to view mode
+        toggleEditMode(false);
+    }
+
+    // On page load, initialize with view mode
+    document.addEventListener('DOMContentLoaded', function() {
+        toggleEditMode(false);  // Start with view mode when the page loads
+    });
+</script>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,16 @@
+﻿@model Ticket
+
+<div class="ticket-card">
+    <div class="ticket-selection">
+        <input type="checkbox" disabled />
+    </div>
+    <div class="ticket-state">
+        @Model.State
+    </div>
+    <div class="ticket-primary">
+        <a asp-controller="Ticket" asp-action="Details" asp-route-id="@Model.Id">@Model.Title</a>
+    </div>
+    <div class="ticket-secondary">
+        @Model.Id - @Model.CreatedAt.ToString("g") <a asp-controller="Ticket" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+    </div>
+</div>

@@ -1,0 +1,29 @@
+﻿@model TicketModifyViewModel
+
+<section>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2 class="text-center mb-4">Create Ticket</h2>
+            <form asp-action="Create" method="post">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group mb-3">
+                    <label for="Title" class="form-label">Title</label>
+                    <input type="text" id="Title" name="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group mb-3">
+                    <label for="Description" class="form-label">Description</label>
+                    <textarea type="text" id="Description" name="Description" class="form-control" rows="10"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-secondary mb-3">Cancel</button>
+                    <button type="submit" class="btn btn-primary mb-3">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
