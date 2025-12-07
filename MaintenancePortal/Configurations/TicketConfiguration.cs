@@ -9,25 +9,19 @@ public class TicketConfiguration : IEntityTypeConfiguration<Ticket>
 {
     public void Configure(EntityTypeBuilder<Ticket> builder)
     {
-        //// Composite primary key on ParentGene and SelfGene
-        //builder.HasKey(ticket => new { ticket.ParentId, ticket.Id });
-
-        //// Index on ParentGene for faster lookups
-        //builder.HasIndex(iticket => ticket.ParentId);
-
-        //// Index on SelfGene for faster lookups
-        //builder.HasIndex(ticket => ticket.Id);
-
-        //// Unique constraint on Title and CreatedByUserId
-        //builder
-        //    .HasIndex(i => new { i.Title, i.CreatedByUserId })
-        //    .IsUnique();
-
-        //// Configure relationship between Issue and User (CreatedByUser)
-        //builder
-        //    .HasOne(ticket => ticket.CreatedByUser)
-        //    .WithMany()
-        //    .HasForeignKey(ticket => ticket.CreatedByUserId)
-        //    .OnDelete(DeleteBehavior.Restrict); // Avoid cascade delete on users
+        List<Ticket> tickets = new List<Ticket>();
+        for (int i = 0; i < 30; i++)
+        {
+            tickets.Add(new Ticket
+            {
+                Id = i + 1,
+                State = i % 3 == 0 ? "Open" : (i % 3 == 1 ? "In Progress" : "Closed"),
+                Title = $"Sample Ticket {i + 1}",
+                Description = "This is a sample ticket.",
+                CreatedAt = new DateTime(2000, 1, 1),
+                UpdatedAt = new DateTime(2000, 1, 1)
+            });
+        }
+        builder.HasData(tickets);
     }
 }
