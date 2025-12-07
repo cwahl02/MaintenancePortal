@@ -2,11 +2,7 @@
 
 public class TicketListViewModel
 {
-    public string Query { get; set; }
-    public string Status { get; set; }
-    public string Sort { get; set; }
-    public int Page { get; set; }
-    public int TotalPages { get; set; }
-
-    public IEnumerable<Ticket> Tickets { get; set; }
+    public PaginationMetadata PaginationMetadata { get; set; } = new PaginationMetadata();
+    public IEnumerable<int> Pagination { get; set; } = new List<int>();
+    public IEnumerable<Ticket> Tickets { get; set; } = new List<Ticket>();
 }
