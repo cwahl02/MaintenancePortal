@@ -56,7 +56,7 @@ public class PaginationMetadata
         {
             case PageState.Compact:
                 // Show all pages
-                for (int i = 1; i <= total; i++)
+                for (int i = 0; i < total; i++)
                 {
                     pages.Add(i);
                 }
@@ -64,7 +64,7 @@ public class PaginationMetadata
 
             // Case 2: Near the start (page 0 + window size)
             case PageState.Start:
-                for(int i = 1; i < TotalPages + 1; i++)
+                for(int i = 0; i < TotalPages; i++)
                 {
                     pages.Add(i);
                 }
