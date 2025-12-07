@@ -1,1 +1,70 @@
-﻿<h1>Tickets</h1>
+﻿@model TicketListViewModel
+
+<h1>Tickets</h1>
+
+<section class="toolbar ">
+    <form method="post">
+        <input type="text" placeholder="Search ticket..." disabled />
+    </form>
+    <a asp-asp-controller="Ticket" asp-action="Create">New Ticket</a>
+</section>
+<section class="card">
+    <div class="card-header filters">
+        <a asp-action="Index" asp-route-query="state:open" asp-route-page="0">Open</a>
+        <a asp-action="Index" asp-route-query="state:inprogress" asp-route-page="0">In Progress</a>
+        <a asp-action="Index" asp-route-query="state:closed" asp-route-page="0">Closed</a>
+        <a asp-action="Index" asp-route-query="" asp-route-page="0">Mine</a>
+    </div>
+    <div class="ticket-list">
+        @foreach (var ticket in Model.Tickets)
+        {
+            @await Html.PartialAsync("_TicketCard", ticket)
+        }
+    </div>
+</section>
+<section class="pagination justify-content-center">
+    <ul class="pagination">
+        @if (Model.PaginationMetadata.HasPrevious)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-action="Index" asp-route-query="@Model.Query" asp-route-page="@(Model.PaginationMetadata.Current - 1)">Previous</a>
+            </li>
+        }
+        else
+        {
+            <li class="page-item disabled">
+                <a class="page-link" asp-action="Index" asp-route-query="@Model.Query" asp-route-page="@(Model.PaginationMetadata.Current - 1)">Previous</a>
+            </li>
+
+        }
+
+        @foreach (var item in Model.Pagination)
+        {
+            @if (item == Model.PaginationMetadata.Current)
+            {
+                <li class="page-item active">
+                    <a class="page-link" asp-action="Index" asp-route-page="@item">@item</a>
+                </li>            
+            }
+            else
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-action="Index" asp-route-page="@item">@item</a>
+                </li>
+            }
+        }
+
+        @if (Model.PaginationMetadata.HasNext)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-action="Index" asp-route-query="@Model.Query" asp-route-page="@(Model.PaginationMetadata.Current + 1)">Next</a>
+            </li>
+        }
+        else
+        {
+            <li class="page-item disabled">
+                <a class="page-link" asp-action="Index" asp-route-query="@Model.Query" asp-route-page="@(Model.PaginationMetadata.Current + 1)">Next</a>
+            </li>
+        }
+    </ul>
+</section>
