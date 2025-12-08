@@ -27,6 +27,16 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
+                    @if(User.Identity != null && User.Identity!.IsAuthenticated)
+                    {
+                        <ul class="navbar-nav ms-auto">
+                            <li class="nav-item">
+                                <form method="post" asp-controller="User" asp-action="Logout">
+                                    <button type="submit" class="nav-link text-dark">Logout</button>
+                                </form>
+                            </li>
+                        </ul>                        
+                    }
                 </div>
             </div>
         </nav>
