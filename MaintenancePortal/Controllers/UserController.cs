@@ -1,4 +1,5 @@
 ﻿using MaintenancePortal.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,10 +16,10 @@ public class UserController : Controller
         _signInManager = signInManager;
     }
 
-
     [HttpGet]
     public IActionResult Login(string? returnUrl = null)
     {
+        if (User.Identity!.IsAuthenticated) return RedirectToAction("Index", "Ticket");
         ViewData["ReturnUrl"] = returnUrl;
         return View();
     }
@@ -73,6 +74,18 @@ public class UserController : Controller
             ModelState.AddModelError(string.Empty, "Invalid login attempt.");
             return View(model);
         }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Logout()
+    {
+        // Sign out from Identity
+        await _signInManager.SignOutAsync();
+
+        Response.Cookies.Delete(".AspNetCore.Identity.Application");
+
+        // Redirect to the login page after logout
+        return RedirectToAction("Login", "User");
     }
 
     [HttpGet]
