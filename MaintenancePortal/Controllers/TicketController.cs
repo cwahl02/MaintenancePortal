@@ -1,10 +1,12 @@
 ﻿using MaintenancePortal.Data;
 using MaintenancePortal.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace MaintenancePortal.Controllers;
 
+[Authorize]
 public class TicketController : Controller
 {
     private readonly AppDbContext _context;
