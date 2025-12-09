@@ -19,25 +19,25 @@ public class TicketController : Controller
     {
         var _tickets = _context.Tickets.AsQueryable();
 
-        var totalOpenItems = _tickets.Count(t => t.State == "Open");
-        var totalInProgressItems = _tickets.Count(t => t.State == "In Progress");
-        var totalClosedItems = _tickets.Count(t => t.State == "Closed");
+        var totalOpenItems = _tickets.Count(t => t.State == TicketState.Open);
+        var totalInProgressItems = _tickets.Count(t => t.State == TicketState.InProgress);
+        var totalClosedItems = _tickets.Count(t => t.State == TicketState.Closed);
 
         if (query != null && query.Contains("state"))
         {
             if (query.Contains("open"))
             {
-                _tickets = _tickets.Where(t => t.State == "Open");
+                _tickets = _tickets.Where(t => t.State == TicketState.Open);
             }
 
             if (query.Contains("inprogress"))
             {
-                _tickets = _tickets.Where(t => t.State == "In Progress");
+                _tickets = _tickets.Where(t => t.State == TicketState.InProgress);
             }
 
             if (query.Contains("closed"))
             {
-                _tickets = _tickets.Where(t => t.State == "Closed");
+                _tickets = _tickets.Where(t => t.State == TicketState.Closed);
             }
         }
 
@@ -87,7 +87,6 @@ public class TicketController : Controller
             Title = ticket.Title,
             Description = ticket.Description,
             CreatedAt = ticket.CreatedAt,
-            UpdatedAt = ticket.UpdatedAt
         });
     }
 
@@ -107,8 +106,9 @@ public class TicketController : Controller
             {
                 Title = model.Title,
                 Description = model.Description,
-                State = "Open",
-                CreatedAt = DateTime.Now
+                State = TicketState.Open,
+                CreatedAt = DateTime.Now,
+                CreatedById = "system" // Placeholder for the user ID
             };
 
             _context.Tickets.Add(ticket);
