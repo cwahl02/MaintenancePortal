@@ -3,7 +3,7 @@
 public class TicketEditableViewModel
 {
     public int Id { get; set; }
-    public string State { get; set; } = string.Empty;
+    public TicketState State { get; set; }
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
 
