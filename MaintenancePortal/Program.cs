@@ -9,19 +9,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-// Configure cookie-based authentication
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
-    {
-        options.Cookie.HttpOnly = true;
-        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-        options.ExpireTimeSpan = TimeSpan.FromDays(14);
-        options.SlidingExpiration = true;
-        options.LoginPath = "/User/Login"; // Redirect to this path if not authenticated
-        options.LoginPath = "/User/Login"; // Redirect to this path if not authenticated
-        //options.AccessDeniedPath = "/User/AccessDenied"; // Redirect to this path if access is denied
-    });
-
 // Register AppDbContext with ASP.NET Core DI container
 // Connect to SQL Server using "DefaultConnection" from appsettings.json
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -35,6 +22,21 @@ builder.Services.AddIdentity<User, IdentityRole>()
     // Enable default token providers for password reset, email confirmation, etc.
     .AddDefaultTokenProviders();
 
+// Add authorization services
+builder.Services.AddAuthorization();
+
+// Configure cookie-based authentication
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        options.ExpireTimeSpan = TimeSpan.FromDays(14);
+        options.SlidingExpiration = true;
+        options.LoginPath = "/User/Login"; // Redirect to this path if not authenticated
+        options.LogoutPath = "/User/Logout"; // Redirect to this path if not authenticated
+        //options.AccessDeniedPath = "/User/AccessDenied"; // Redirect to this path if access is denied
+    });
 
 var app = builder.Build();
 
@@ -59,8 +61,9 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+
+app.UseAuthentication(); // Must come before UseAuthorization, otherwise auth won't work
 app.UseAuthorization();
-app.UseAuthentication();
 
 app.MapStaticAssets();
 
