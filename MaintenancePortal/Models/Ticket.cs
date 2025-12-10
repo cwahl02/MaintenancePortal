@@ -17,13 +17,22 @@ public class Ticket
 
     [Required, StringLength(255)]
     public required string Title { get; set; }
+
     [Required, StringLength(1024)]
     public required string Description { get; set; }
 
     [Required, Column(TypeName = "datetime2")]
     public DateTime CreatedAt { get; set; }
+
+    [Column(TypeName = "datetime2")]
+    public DateTime? ClosedAt{ get; set; }
+
+    [Required, Column(TypeName = "datetime2")]
+    public DateTime LastModifiedAt { get; set; }
+
     [Required, Column(TypeName = "nvarchar(32)")]
     public TicketState State { get; set; }
+
     [Required]
     public required string CreatedById { get; set; }
 }
