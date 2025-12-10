@@ -1,26 +1,60 @@
 ﻿@model TicketListViewModel
 
+@{
+    ViewData["Title"] = "Tickets";
+}
+
+<style>
+    .quick-query-btn:hover {
+        background-color: red;
+    }
+</style>
+
 <h1>Tickets</h1>
 
-<section class="toolbar ">
-    <form method="post">
-        <input type="text" placeholder="Search ticket..." disabled />
-    </form>
-    <a asp-asp-controller="Ticket" asp-action="Create">New Ticket</a>
+<section class="toolbar mb-3 d-flex justify-content-between">
+        <input class="" type="text" placeholder="Search ticket..." disabled />
+    <a class="btn btn-primary" asp-asp-controller="Ticket" asp-action="Create">New Ticket</a>
 </section>
-<section class="card">
-    <div class="card-header filters">
-        <a asp-action="Index" asp-route-query="state:open" asp-route-page="0">Open</a>
-        <a asp-action="Index" asp-route-query="state:inprogress" asp-route-page="0">In Progress</a>
-        <a asp-action="Index" asp-route-query="state:closed" asp-route-page="0">Closed</a>
-        <a asp-action="Index" asp-route-query="" asp-route-page="0">Mine</a>
+
+<section class="list-group">
+    <!-- List Header -->
+    <div class="list-group-item d-flex gap-2">
+        <div class="btn-group">
+            <!-- Open Button -->
+            <a class="btn btn-outline-primary text-decoration-none hover-text-"
+               asp-action="Index"
+               asp-route-query="state:open"
+               id="open-filter">
+                <span>Open</span>
+                <span class="badge rounded-pill bg-primary text-white px-3">@Model.PaginationMetadata.TotalOpenItems</span>
+            </a>
+
+            <!-- In Progress Button -->
+            <a class="btn btn-outline-warning text-decoration-none hover-text-"
+               asp-action="Index"
+               asp-route-query="state:inprogress"
+               id="in-progress-filter">
+                <span>In Progress</span>
+                <span class="badge rounded-pill bg-warning text-white px-3">@Model.PaginationMetadata.TotalInProgressItems</span>
+            </a>
+
+            <!-- Closed Button -->
+            <a class="btn btn-outline-danger text-decoration-none hover-text-"
+               asp-action="Index"
+               asp-route-query="state:closed"
+               id="closed-filter">
+                <span>Closed</span>
+                <span class="badge rounded-pill bg-danger text-white px-3">@Model.PaginationMetadata.TotalClosedItems</span>
+            </a>
+        </div>
     </div>
-    <div class="ticket-list">
-        @foreach (var ticket in Model.Tickets)
-        {
-            @await Html.PartialAsync("_TicketCard", ticket)
-        }
-    </div>
+
+    
+    @foreach (var ticket in Model.Tickets)
+    {
+        @await Html.PartialAsync("_TicketCard", ticket)
+    }
 </section>
 <section class="pagination justify-content-center">
     <ul class="pagination">
@@ -43,13 +77,13 @@
             @if (item == Model.PaginationMetadata.Current)
             {
                 <li class="page-item active">
-                    <a class="page-link" asp-action="Index" asp-route-page="@item">@item</a>
+                    <a class="page-link" asp-action="Index" asp-route-query="@Model.Query" asp-route-page="@item">@item</a>
                 </li>            
             }
             else
             {
                 <li class="page-item">
-                    <a class="page-link" asp-action="Index" asp-route-page="@item">@item</a>
+                    <a class="page-link" asp-action="Index" asp-route-query="@Model.Query" asp-route-page="@item">@item</a>
                 </li>
             }
         }

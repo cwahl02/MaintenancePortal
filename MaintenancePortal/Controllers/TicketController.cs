@@ -19,7 +19,7 @@ public class TicketController : Controller
     [HttpGet]
     public IActionResult Index(string? query = "", int page = 0, int pageSize = 10)
     {
-        var _tickets = _context.Tickets.AsQueryable();
+        IOrderedQueryable<Ticket> _tickets = _context.Tickets.AsQueryable().OrderByDescending(t => t.Id);
 
         var totalOpenItems = _tickets.Count(t => t.State == TicketState.Open);
         var totalInProgressItems = _tickets.Count(t => t.State == TicketState.InProgress);
@@ -29,17 +29,17 @@ public class TicketController : Controller
         {
             if (query.Contains("open"))
             {
-                _tickets = _tickets.Where(t => t.State == TicketState.Open);
+                _tickets = (IOrderedQueryable<Ticket>)_tickets.Where(t => t.State == TicketState.Open);
             }
 
             if (query.Contains("inprogress"))
             {
-                _tickets = _tickets.Where(t => t.State == TicketState.InProgress);
+                _tickets = (IOrderedQueryable<Ticket>)_tickets.Where(t => t.State == TicketState.InProgress);
             }
 
             if (query.Contains("closed"))
             {
-                _tickets = _tickets.Where(t => t.State == TicketState.Closed);
+                _tickets = (IOrderedQueryable<Ticket>)_tickets.Where(t => t.State == TicketState.Closed);
             }
         }
 
@@ -62,6 +62,19 @@ public class TicketController : Controller
             Pagination = pagination,
             Tickets = _tickets.Skip(page * pageSize)
                 .Take(pageSize)
+                .Select(ticket => new TicketIndexViewModel
+                {
+                    Id = ticket.Id,
+                    Title = ticket.Title,
+                    Description = ticket.Description,
+                    State = ticket.State,
+                    StateDate = (DateTime)(ticket.State == TicketState.Closed ? ticket.ClosedAt! : ticket.CreatedAt),
+                    UserId = ticket.CreatedById,
+                    Username = _context.Users
+                        .Where(u => u.Id == ticket.CreatedById)
+                        .Select(u => u.UserName)
+                        .FirstOrDefault() ?? "Unknown",
+                })
                 .ToList()
         };
 
@@ -110,7 +123,7 @@ public class TicketController : Controller
                 Description = model.Description,
                 State = TicketState.Open,
                 CreatedAt = DateTime.Now,
-                CreatedById = "system" // Placeholder for the user ID
+                CreatedById = _context.Users.FirstOrDefault(u => u.UserName == User.Identity.Name).Id
             };
 
             _context.Tickets.Add(ticket);
@@ -138,28 +151,41 @@ public class TicketController : Controller
         return View(model);
     }
 
-    [HttpPost("edit/{id}")]
-    public IActionResult Edit(int id, TicketEditableViewModel model)
+    [HttpPost]
+    public async Task<IActionResult> Edit(TicketEditableViewModel model)
     {
-        if (!ModelState.IsValid)
+        // Log to check if the model is received correctly
+        Console.WriteLine($"Ticket ID: {model.Id}, Title: {model.Title}, Description: {model.Description}");
+        if (ModelState.IsValid)
         {
-            return View(model);
+            Ticket? ticket = _context.Tickets.Find(model.Id);
+            if(ticket != null)
+            {
+                ticket.Title = model.Title;
+                ticket.Description = model.Description;
+                
+                _context.SaveChanges();
+
+                return Json(new
+                {
+                    success = true,
+                    updatedTicket = new
+                    {
+                        Id = ticket.Id,
+                        Title = ticket.Title,
+                        Description = ticket.Description
+                    }
+                });
+            }
+            else
+            {
+                return Json(new { success = false , message = "Ticket not found." });
+            }
         }
-
-        Ticket? ticket = _context.Tickets.Find(id);
-
-        if (ticket is null)
+        else
         {
-            return NotFound();
+            return Json(new { success = false, message = "Error updating ticket." });
         }
-
-        ticket.Title = model.Title ?? ticket.Title;
-        ticket.Description = model.Description ?? ticket.Description;
-
-        _context.Tickets.Update(ticket);
-        _context.SaveChanges();
-
-        return RedirectToAction("Details", new { Id = model.Id });
     }
 
     [HttpPost]
