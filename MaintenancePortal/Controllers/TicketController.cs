@@ -202,29 +202,4 @@ public class TicketController : Controller
 
         return RedirectToAction("Index");
     }
-
-    [HttpPost]
-    public IActionResult Edit4(TicketEditableViewModel model)
-    {
-        Ticket? ticket = _context.Tickets.Find(model.Id);
-        if (ticket == null)
-        {
-            return NotFound();
-        }
-
-        ticket.State = model.State;
-        _context.Tickets.Update(ticket);
-        _context.SaveChanges();
-
-        var updatedViewModel = new TicketEditableViewModel()
-        {
-            Id = ticket!.Id,
-            Title = ticket.Title,
-            Description = ticket.Description,
-            State = ticket.State,
-            CreatedAt = ticket.CreatedAt,
-            UpdatedAt = ticket.LastModifiedAt
-        };
-        return Json(ticket);
-    }
 }
