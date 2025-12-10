@@ -2,118 +2,55 @@
 
 <section id="ticketContainer">
     <!-- The content will be injected here by JavaScript -->
+    @await Html.PartialAsync("_TicketDetails", Model)  <!-- Initial render of ticket details -->
 </section>
 
 <script>
-    // Ensure the model properties are serialized correctly from Razor
-    let currentTitle = '@Model.Title';  // Directly use Razor to inject values
-    let currentDescription = '@Model.Description';  // Ensure the description is a string
-    const ticketId = @Model.Id;  // Directly inject ticketId
-
-    // The HTML structure for view and edit modes
-    function getViewModeHTML() {
-        return `
-            <div class="card-body">
-                <div id="ticketHeader">
-                    <div class="view-mode d-flex justify-content-between align-items-center">
-                        <h3 id="ticketTitleDisplay">${currentTitle} <span class="text-secondary fw-light">#${ticketId}</span></h3>
-                        <button class="btn btn-outline-primary" onclick="toggleEditMode(true)">Edit</button>
-                    </div>
-                </div>
-                <hr />
-                <h5>Description</h5>
-                <div id="ticketDescription">
-                    <p id="ticketDescriptionDisplay">${currentDescription}</p>
-                </div>
-            </div>
-        `;
+    function editTicket(ticketId) {
+        $.ajax({
+            url: '@Url.Action("Edit", "Ticket")/' + ticketId,
+            type: 'GET',
+            success: function(response) {
+                // Inject the edit form (partial view) into the ticketContainer
+                document.getElementById('ticketContainer').innerHTML = response;
+            },
+            error: function() {
+                alert('An error occurred while loading the edit form.');
+            }
+        });
     }
 
-    function getEditModeHTML() {
-        return `
-            <div class="card-body">
-                <div id="ticketHeader">
-                    <div class="edit-mode d-flex">
-                        <input id="ticketTitle" type="text" class="form-control" value="${currentTitle}" />
-                        <button class="btn btn-secondary mt-2" onclick="toggleEditMode(false)">Cancel</button>
-                        <button class="btn btn-primary mt-2" onclick="updateTicket()">Save</button>
-                    </div>
-                </div>
-                <hr />
-                <h5>Description</h5>
-                <div id="ticketDescription">
-                    <textarea id="ticketDescriptionInput" class="form-control" rows="5">${currentDescription}</textarea>
-                </div>
-            </div>
-        `;
-    }
-
-    // Toggle between view and edit modes
-    function toggleEditMode(isEdit) {
-        const ticketContainer = document.getElementById('ticketContainer');
-        if (isEdit) {
-            // Inject the edit mode HTML
-            ticketContainer.innerHTML = getEditModeHTML();
-        } else {
-            // Inject the view mode HTML
-            ticketContainer.innerHTML = getViewModeHTML();
-        }
-    }
-
-    // Function to send updated ticket data to the server
-    function updateTicket() {
-        const updatedTicket = {
-            Id: ticketId,
+    function saveTicket() {
+        var updatedTicket = {
+            Id: @Model.Id,
             Title: document.getElementById('ticketTitle').value,
             Description: document.getElementById('ticketDescriptionInput').value
         };
 
         $.ajax({
-            url: '@Url.Action("Edit", "Ticket")',
+            url: '@Url.Action("Update", "Ticket")',
             type: 'POST',
             data: updatedTicket,
             success: function(response) {
-                if (response.success) {
-                    // No need to update currentTitle and currentDescription here
-                    // Just update the page view with the already available values
-                    currentTitle = updatedTicket.Title;
-                    currentDescription = updatedTicket.Description;
-                    updatePage();
-                } else {
-                    alert("Failed to update ticket: " + response.message);
-                }
+                // Replace the ticketContainer's content with updated ticket details
+                document.getElementById('ticketContainer').innerHTML = response;
             },
-            error: function(xhr, status, error) {
-                alert("An error occurred while saving the ticket: " + error);
+            error: function() {
+                alert('An error occurred while saving the ticket.');
             }
         });
     }
 
-    // Function to update the UI after the ticket has been updated successfully
-    function updatePage() {
-        // Switch to view mode and update the content with current values
-        const ticketContainer = document.getElementById('ticketContainer');
-
-        // Update the HTML to reflect the current title and description
-        ticketContainer.innerHTML = `
-            <div class="card-body">
-                <div id="ticketHeader">
-                    <div class="view-mode d-flex justify-content-between align-items-center">
-                        <h3 id="ticketTitleDisplay">${currentTitle} <span class="text-secondary fw-light">#${ticketId}</span></h3>
-                        <button class="btn btn-outline-primary" onclick="toggleEditMode(true)">Edit</button>
-                    </div>
-                </div>
-                <hr />
-                <h5>Description</h5>
-                <div id="ticketDescription">
-                    <p id="ticketDescriptionDisplay">${currentDescription}</p>
-                </div>
-            </div>
-        `;
+    function cancelEdit() {
+        $.ajax({
+            url: '@Url.Action("Details", "Ticket")',
+            type: 'GET',
+            success: function(response) {
+                document.getElementById('ticketContainer').innerHTML = response;
+            },
+            error: function() {
+                alert('An error occurred while cancelling the edit.');
+            }
+        });
     }
-
-    // Initialize the page in view mode on load
-    document.addEventListener('DOMContentLoaded', function() {
-        toggleEditMode(false);  // Start with view mode on page load
-    });
 </script>
