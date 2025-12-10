@@ -1,0 +1,16 @@
+﻿@model TicketEditableViewModel
+
+<div class="card-body">
+    <div id="ticketHeader">
+        <div class="edit-mode d-flex">
+            <input id="ticketTitle" type="text" class="form-control" value="@Model.Title" />
+            <button class="btn btn-secondary mt-2" onclick="cancelEdit()">Cancel</button>
+            <button class="btn btn-primary mt-2" onclick="saveTicket()">Save</button>
+        </div>
+    </div>
+    <hr />
+    <h5>Description</h5>
+    <div id="ticketDescription">
+        <textarea id="ticketDescriptionInput" class="form-control" rows="5">@Model.Description</textarea>
+    </div>
+</div>
