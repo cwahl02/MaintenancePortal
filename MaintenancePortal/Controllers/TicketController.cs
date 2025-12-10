@@ -211,12 +211,12 @@ public class TicketController : Controller
         Ticket? ticket = _context.Tickets.Find(id);
         if (ticket is null)
         {
-            return NotFound();
+            return Json(new { success = false });
         }
 
         _context.Tickets.Remove(ticket);
         _context.SaveChanges();
 
-        return RedirectToAction("Index");
+        return Json(new { success = true, redirectUrl = Url.Action("Index", "Ticket") });
     }
 }
