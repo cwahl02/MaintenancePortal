@@ -43,11 +43,26 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
+    var logger = services.GetRequiredService<ILogger<Program>>(); // Add logger for debugging
+    var context = services.GetRequiredService<AppDbContext>();
     var userManager = services.GetRequiredService<UserManager<User>>();
-    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
-    // Call the seed method
-    await SeedDatabase(userManager, roleManager);
+    try
+    {
+        // Apply any pending migrations
+        await context.Database.MigrateAsync();
+        logger.LogInformation("Database migrations applied.");
+
+        // Call the SeedData method to seed users and tickets
+        logger.LogInformation("Starting data seeding...");
+        await SeedData.InitializeAsync(context, userManager);
+        logger.LogInformation("Seeding completed successfully.");
+    }
+    catch (Exception ex)
+    {
+        // Log any errors that happen during seeding
+        logger.LogError(ex, "An error occurred while seeding the database.");
+    }
 }
 
 // Configure the HTTP request pipeline.
@@ -74,35 +89,3 @@ app.MapControllerRoute(
 
 
 app.Run();
-
-async Task SeedDatabase(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
-{
-    // Seed default roles
-    string[] roleNames = { "Admin", "User" };
-    foreach (var roleName in roleNames)
-    {
-        var roleExist = await roleManager.RoleExistsAsync(roleName);
-        if (!roleExist)
-        {
-            await roleManager.CreateAsync(new IdentityRole(roleName));
-        }
-    }
-
-    // Seed a default admin user
-    var defaultUser = await userManager.FindByEmailAsync("admin@example.com");
-    if (defaultUser == null)
-    {
-        defaultUser = new User
-        {
-            UserName = "admin",
-            Email = "admin@example.com",
-            FirstName = "Admin",
-            LastName = "User"
-        };
-        var result = await userManager.CreateAsync(defaultUser, "Admin@1234");
-        if (result.Succeeded)
-        {
-            await userManager.AddToRoleAsync(defaultUser, "Admin");
-        }
-    }
-}

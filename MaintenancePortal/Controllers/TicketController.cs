@@ -2,6 +2,7 @@
 using MaintenancePortal.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace MaintenancePortal.Controllers;
@@ -95,6 +96,8 @@ public class TicketController : Controller
             return NotFound();
         }
 
+        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
         return View(new TicketEditableViewModel()
         {
             Id = ticket.Id,
@@ -102,6 +105,8 @@ public class TicketController : Controller
             Title = ticket.Title,
             Description = ticket.Description,
             CreatedAt = ticket.CreatedAt,
+            UpdatedAt = ticket.LastModifiedAt,
+            CanEdit = ticket.CreatedById == currentUserId
         });
     }
 
@@ -134,58 +139,70 @@ public class TicketController : Controller
         return View(model);
     }
 
-    [HttpGet("edit/{id}")]
     public IActionResult Edit(int id)
     {
-        Ticket? ticket = _context.Tickets.Find(id);
-        if (ticket is null)
+        var ticket = _context.Tickets.Find(id);
+        if (ticket == null)
         {
             return NotFound();
         }
-        TicketModifyViewModel model = new TicketModifyViewModel
+
+        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);  // Get logged-in user ID
+
+        // If user is not the creator, redirect back to details
+        if (ticket.CreatedById != currentUserId)
+        {
+            return Unauthorized();
+        }
+
+        var viewModel = new TicketEditableViewModel
         {
             Id = ticket.Id,
             Title = ticket.Title,
             Description = ticket.Description
         };
-        return View(model);
+
+        // Return a partial view with the ticket in edit mode
+        return PartialView("_EditTicket", viewModel);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Edit(TicketEditableViewModel model)
+    public IActionResult Update(TicketEditableViewModel model)
     {
-        // Log to check if the model is received correctly
-        Console.WriteLine($"Ticket ID: {model.Id}, Title: {model.Title}, Description: {model.Description}");
         if (ModelState.IsValid)
         {
-            Ticket? ticket = _context.Tickets.Find(model.Id);
-            if(ticket != null)
+            var ticket = _context.Tickets.Find(model.Id);
+            if (ticket == null)
             {
-                ticket.Title = model.Title;
-                ticket.Description = model.Description;
-                
-                _context.SaveChanges();
+                return NotFound();
+            }
 
-                return Json(new
-                {
-                    success = true,
-                    updatedTicket = new
-                    {
-                        Id = ticket.Id,
-                        Title = ticket.Title,
-                        Description = ticket.Description
-                    }
-                });
-            }
-            else
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);  // Get logged-in user ID
+
+            // If user is not the creator, reject the update
+            if (ticket.CreatedById != currentUserId)
             {
-                return Json(new { success = false , message = "Ticket not found." });
+                return Unauthorized();
             }
+
+            // Update ticket with new values
+            ticket.Title = model.Title;
+            ticket.Description = model.Description;
+            _context.SaveChanges();
+
+            // Return the updated details view as a partial view
+            var updatedViewModel = new TicketEditableViewModel
+            {
+                Id = ticket.Id,
+                Title = ticket.Title,
+                Description = ticket.Description,
+                CanEdit = ticket.CreatedById == currentUserId
+            };
+
+            return PartialView("_TicketDetails", updatedViewModel);  // Return updated ticket details as a partial view
         }
-        else
-        {
-            return Json(new { success = false, message = "Error updating ticket." });
-        }
+
+        return BadRequest();  // Return an error if model validation fails
     }
 
     [HttpPost]
