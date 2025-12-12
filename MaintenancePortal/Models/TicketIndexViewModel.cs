@@ -1,5 +1,11 @@
 ﻿namespace MaintenancePortal.Models;
 
+/// <summary>
+/// Represents a view model containing summary information for a displaying a ticket on index list.
+/// </summary>
+/// <remarks>This model is typically used to display ticket details in lists or overviews, providing key
+/// information such as status, creation date, and user details. It does not include the full ticket history or related
+/// entities.</remarks>
 public class TicketIndexViewModel
 {
     public required int Id { get; set; }
