@@ -1,13 +1,17 @@
-# Features & Roadmap
+﻿# Features & Roadmap
+
+[← Back to README](README.md) | [← Previous: Getting Started](GETTING_STARTED.md) | [Next: Technologies →](TECHNOLOGIES.md)
+
+---
 
 This document outlines the current features and planned enhancements for MaintenancePortal.
 
 ---
 
 ## Feature Status Legend
-- ? **Complete** - Feature is fully implemented
-- ?? **In Progress** - Feature is currently being developed
-- ? **Planned** - Feature is planned for future development
+- ✅ **Complete** - Feature is fully implemented
+- 🚧 **In Progress** - Feature is currently being developed
+- ⏳ **Planned** - Feature is planned for future development
 
 ---
 
@@ -27,30 +31,30 @@ This document outlines the current features and planned enhancements for Mainten
 
 ## Core Features
 
-### ? Ticket System (Complete)
+### ✅ Ticket System (Complete)
 - [x] Create tickets
 - [x] View ticket details
 - [x] Edit tickets
 - [x] Delete tickets
 
-### ? User System (In Progress)
+### 🚧 User System (In Progress)
 - [x] User registration
 - [x] User login
 - [x] Edit user profile
 - [ ] Delete user account
 
-### ?? Tag System
+### ⏳ Tag System
 - [ ] Create tags
 - [ ] Edit tags
 - [ ] Delete tags
 - [ ] Assign tags to tickets
 
-### ? Comment System
+### ⏳ Comment System
 - [ ] Add comments to tickets
 - [ ] Edit comments
 - [ ] Delete comments
 
-### ? Group System
+### ⏳ Group System
 - [ ] Create groups
 - [ ] Edit groups
 - [ ] Delete groups
@@ -61,7 +65,7 @@ This document outlines the current features and planned enhancements for Mainten
 
 ## Advanced Features
 
-### ?? Advanced Ticket Management
+### 🚧 Advanced Ticket Management
 - [ ] Ticket assignment to users
 - [x] Ticket status tracking (Open, In Progress, Completed)
 - [ ] Ticket priority levels
@@ -77,14 +81,14 @@ This document outlines the current features and planned enhancements for Mainten
    - [ ] Group-based ticket filtering
    - [ ] Group ticket permissions
 
-### ?? Commenting System
+### 🚧 Commenting System
 - [ ] Add comments to tickets
 - [ ] View comment history
 - [ ] Edit own comments
 - [ ] Delete own comments
 - [ ] Admin delete any comment
 
-### ? User Dashboard
+### ⏳ User Dashboard
 - [ ] Overview of assigned tickets
 - [ ] Recent activity feed
 - [ ] Ticket statistics (Open, In Progress, Completed)
@@ -92,7 +96,7 @@ This document outlines the current features and planned enhancements for Mainten
 - [ ] Upcoming deadlines/priorities
 - [ ] Group tickets overview
 
-### ?? User Profile & Settings
+### 🚧 User Profile & Settings
 - [ ] Advanced user profile
    - [ ] Profile picture upload
    - [ ] Change display name
@@ -107,7 +111,7 @@ This document outlines the current features and planned enhancements for Mainten
    - [ ] Disable account
    - [ ] Delete account
 
-### ? Jobs and Permission System
+### ⏳ Jobs and Permission System
 - [ ] Job titles management
    - [ ] Create job titles
    - [ ] Assign job titles to users
@@ -125,7 +129,7 @@ This document outlines the current features and planned enhancements for Mainten
    - [ ] Group-specific ticket visibility
    - [ ] Potential group isolation (instance-like behavior)
 
-### ? Audit Log System
+### ⏳ Audit Log System
 - [ ] Log all user actions
    - [ ] Ticket creation, updates, deletion
    - [ ] User account changes
@@ -140,19 +144,23 @@ This document outlines the current features and planned enhancements for Mainten
    - [ ] Search audit logs
 - [ ] Audit log retention policies
 
-### ? Theme System
+### ⏳ Theme System
 - [ ] Light theme
 - [ ] Dark theme
 - [ ] Custom color schemes
 - [ ] User preference persistence
 
-### ? Notification System
+### ⏳ Notification System
 - [ ] Email notifications for ticket updates
 - [ ] In-app notifications
 - [ ] Notification for group ticket updates
 
-### ? Reporting and Analytics
+### ⏳ Reporting and Analytics
 - [ ] Ticket completion statistics
 - [ ] User performance metrics
 - [ ] Group performance metrics
 - [ ] Export reports to PDF/CSV
+
+---
+
+[← Back to README](README.md) | [← Previous: Getting Started](GETTING_STARTED.md) | [Next: Technologies →](TECHNOLOGIES.md)

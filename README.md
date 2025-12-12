@@ -70,28 +70,3 @@ See the full [Features & Roadmap](FEATURES.md) for details.
 - **SQL Server Management Studio** - Database management *(optional)*
 
 See [Technologies Used](TECHNOLOGIES.md) for the complete stack and architecture details.
-
----
-
-## Contributing
-
-We welcome contributions! Whether you're fixing bugs, adding features, or improving documentation, your help is appreciated.
-
-### How to Contribute:
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-See [Contributing Guidelines](CONTRIBUTING.md) for detailed guidelines and code standards.
-
----
-
-## License
-[MIT License](LICENSE) *(or specify your license)*
-
----
-
-## Contact
-For questions or feedback, reach out to [@cwahl02](https://github.com/cwahl02).

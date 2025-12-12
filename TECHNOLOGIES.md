@@ -1,4 +1,8 @@
-# Technologies & Frameworks Used
+﻿# Technologies & Frameworks Used
+
+[← Back to README](README.md) | [← Previous: Features & Roadmap](FEATURES.md) | [Next: Contributing →](CONTRIBUTING.md)
+
+---
 
 MaintenancePortal is built using modern technologies to ensure reliability, scalability, and maintainability.
 
@@ -30,15 +34,16 @@ MaintenancePortal is built using modern technologies to ensure reliability, scal
 - **Entity Framework Core 9** - ORM used for database modeling, migrations, and data access
   - `Microsoft.EntityFrameworkCore.SqlServer` - SQL Server provider for EF Core
   - `Microsoft.EntityFrameworkCore.Design` - Design-time tools for EF Core, including migrations, scaffolding
+  - **ASP.NET Identity Framework** - Enhanced authentication and authorization
 
 ---
 
 ## Configuration & Hosting
 
 ### Application Infrastructure
-- **Microsoft.Extensions.Configuration** � API for accessing configuration values  
-- **Microsoft.Extensions.Configuration.Json** � Support for JSON-based app settings (e.g., `appsettings.json`)  
-- **Microsoft.Extensions.Hosting** � Used to manage application lifetime, background services, and built-in Dependency Injection
+- **Microsoft.Extensions.Configuration** – API for accessing configuration values  
+- **Microsoft.Extensions.Configuration.Json** – Support for JSON-based app settings (e.g., `appsettings.json`)  
+- **Microsoft.Extensions.Hosting** – Used to manage application lifetime, background services, and built-in Dependency Injection
 
 ---
 
@@ -65,6 +70,9 @@ MaintenancePortal is built using modern technologies to ensure reliability, scal
 
 As the project evolves, we may incorporate:
 - **SignalR** - Real-time notifications
-- **Identity Framework** - Enhanced authentication and authorization
+
 - **Azure Services** - Cloud hosting and services
-- **Docker** - Containerization for deployment
+
+---
+
+[← Back to README](README.md) | [← Previous: Features & Roadmap](FEATURES.md) | [Next: Contributing →](CONTRIBUTING.md)
