@@ -1,5 +1,8 @@
 ﻿namespace MaintenancePortal.Models;
 
+/// <summary>
+/// Represents the data required to edit an existing support ticket.
+/// </summary>
 public class TicketEditViewModel
 {
     public int Id { get; set; }

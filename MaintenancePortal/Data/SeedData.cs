@@ -7,8 +7,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+/// <summary>
+/// Provides methods for seeding initial user and ticket data into the application's database for development or testing
+/// purposes.
+/// </summary>
+/// <remarks>This class is typically used during application startup to ensure that the database contains a set of
+/// sample users and tickets. It is intended for use in development or test environments and should not be used to seed
+/// production data.</remarks>
 public class SeedData
 {
+    /// <summary>
+    /// Asynchronously seeds the database with initial user and ticket data if it does not already exist.
+    /// </summary>
+    /// <remarks>This method should be called during application startup to ensure that required users and
+    /// tickets are present in the database. It is safe to call multiple times; existing data will not be
+    /// duplicated.</remarks>
+    /// <param name="context">The database context used to access and modify ticket data.</param>
+    /// <param name="userManager">The user manager used to create and manage user accounts during seeding.</param>
+    /// <returns>A task that represents the asynchronous initialization operation.</returns>
     public static async Task InitializeAsync(AppDbContext context, UserManager<User> userManager)
     {
         // Seed users first
@@ -18,6 +34,15 @@ public class SeedData
         await SeedTicketsAsync(context);
     }
 
+    /// <summary>
+    /// Seeds the user store with a set of sample users if no users currently exist.
+    /// </summary>
+    /// <remarks>This method generates a predefined set of sample users with unique usernames and emails. It
+    /// should be called during application initialization or testing to ensure that the user store contains sample
+    /// data. The method does nothing if users already exist.</remarks>
+    /// <param name="userManager">The user manager used to create and manage user accounts. Cannot be null.</param>
+    /// <returns>A task that represents the asynchronous seeding operation.</returns>
+    /// <exception cref="Exception">Thrown if a user cannot be created successfully during the seeding process.</exception>
     private static async Task SeedUsersAsync(UserManager<User> userManager)
     {
         // Check if users already exist
@@ -58,6 +83,14 @@ public class SeedData
         }
     }
 
+    /// <summary>
+    /// Seeds the database with sample ticket data if no tickets currently exist and at least one user is present.
+    /// </summary>
+    /// <remarks>If tickets already exist or no users are found in the database, the method does not add any
+    /// tickets. This method is intended for development or testing scenarios to populate the database with initial
+    /// ticket data.</remarks>
+    /// <param name="context">The database context used to access and modify ticket and user data. Cannot be null.</param>
+    /// <returns>A task that represents the asynchronous seeding operation.</returns>
     private static async Task SeedTicketsAsync(AppDbContext context)
     {
         // Check if tickets already exist or users don't exist yet

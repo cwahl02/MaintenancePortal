@@ -1,10 +1,18 @@
 ﻿@model TicketDetailsViewModel
-<!-- -->
+
+@{
+    ViewData["Title"] = $"{Model.Title} · Ticket #{Model.Id}";
+}
+
+<!-- This view displays the details of a specific support ticket, including its title, description, and status. -->
 
 <div class="card-body">
     <div id="ticketHeader">
         <div class="view-mode d-flex justify-content-between align-items-center">
+            <!-- Title -->
             <h3 id="ticketTitleDisplay">@Model.Title <span class="text-secondary fw-light">#@Model.Id</span></h3>
+
+            <!-- Author's Edit Button -->
             @if (Model.CanEdit)
             {
                 <a class="btn btn-outline-primary" href="@Url.Action("Edit", "Ticket", new { id = Model.Id })">Edit</a>
@@ -12,11 +20,13 @@
         </div>
     </div>
     <hr />
+
+    <!-- Description -->
     <h5>Description</h5>
-    <div id="ticketDescription">
-        <p>@Model.Description</p>
-    </div>
+    <p>@Model.Description</p>
     <hr />
+
+    <!-- Close or Reopen Ticket -->
     <form action="@Url.Action("CloseOrOpen", "Ticket", new { id = Model.Id })" method="post" class="d-inline">
         <button type="submit" class="btn btn-primary">
             @(Model.IsOpen ? "Close Ticket" : "Reopen Ticket")

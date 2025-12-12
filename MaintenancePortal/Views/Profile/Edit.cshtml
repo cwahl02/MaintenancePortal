@@ -1,36 +1,46 @@
 ﻿@model UserEditViewModel
 
+<!-- Edit Profile View -->
+
 <form method="post" asp-controller="Profile" asp-action="UpdateProfile">
     @Html.AntiForgeryToken()
     <input type="hidden" name="Id" value="@Model.Id" />
 
+    <!-- Display Name -->
     <div class="mb-3">
         <label for="DisplayName" class="form-label">Display Name</label>
         <input type="text" class="form-control" name="DisplayName" value="@Model.DisplayName" required />
     </div>
 
+    <!-- Bio -->
     <div class="mb-3">
         <label for="Bio" class="form-label">Bio</label>
         <textarea id="Bio" name="Bio" class="form-control" rows="5" maxlength="250" required>@Model.Bio</textarea>
         <small id="bioCounter" class="form-text text-muted">250 characters remaining</small>
     </div>
 
+    <!-- First Name -->
     <div class="mb-3">
         <label for="FirstName" class="form-label">First Name</label>
         <input type="text" class="form-control" name="FirstName" value="@Model.FirstName" required />
     </div>
 
+    <!-- Last Name -->
     <div class="mb-3">
         <label for="LastName" class="form-label">Last Name</label>
         <input type="text" class="form-control" name="LastName" value="@Model.LastName" required />
     </div>
 
+    <!-- Birthdate -->
     <div class="mb-3">
         <label for="Birthdate" class="form-label">Birthdate</label>
         <input type="date" class="form-control" name="Birthdate" value="@Model.Birthdate?.ToString("yyyy-MM-dd")" required />
     </div>
 
-    <button type="submit" class="btn btn-primary">Save Changes</button>
+    <div class="btn-group">
+        <button type="button" class="btn btn-secondary" onclick="window.location.href='/Profile/@(Model.Username)'">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+    </div>
 </form>
 
 @section Scripts {

@@ -1,5 +1,11 @@
 ﻿@model TicketEditViewModel
 
+@{
+    ViewData["Title"] = $"{Model.Title} · Ticket #{Model.Id}";
+}
+
+<!-- This view allows users to edit an existing support ticket's details, including title and description. -->
+
 <form method="post">
     @Html.AntiForgeryToken()
     <input type="hidden" name="Id" value="@Model.Id" />
