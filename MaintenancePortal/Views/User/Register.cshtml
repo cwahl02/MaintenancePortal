@@ -1,52 +1,86 @@
 ﻿@model RegisterViewModel
 
 <section>
-    <!-- Views/Account/Register.cshtml -->
     <div class="row justify-content-center">
         <div class="col-md-6">
             <h2 class="text-center mb-4">Register New Account</h2>
-            <form asp-controller="User" asp-action="Register" method="post">
+            <form asp-controller="User" asp-action="Register" method="post" novalidate>
                 <div asp-validation-summary="All" class="text-danger"></div>
+
+                <!-- First Name -->
                 <div class="form-group mb-3">
-                    <label for="FirstName" class="form-label">First Name</label>
-                    <input type="text" id="FirstName" name="FirstName" class="form-control" />
+                    <label for="FirstName" class="form-label">
+                        First Name <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" id="FirstName" name="FirstName" class="form-control
+                        @((ViewData.ModelState["FirstName"]?.Errors.Count > 0) ? "is-invalid" : "")" maxlength="50" value="@Model.FirstName" required />
                     <span asp-validation-for="FirstName" class="text-danger"></span>
                 </div>
-                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <!-- Last Name -->
                 <div class="form-group mb-3">
-                    <label for="LastName" class="form-label">Last Name</label>
-                    <input type="text" id="LastName" name="LastName" class="form-control" />
+                    <label for="LastName" class="form-label">
+                        Last Name <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" id="LastName" name="LastName" class="form-control
+                        @((ViewData.ModelState["LastName"]?.Errors.Count > 0) ? "is-invalid" : "")" maxlength="50" value="@Model.LastName" required />
                     <span asp-validation-for="LastName" class="text-danger"></span>
                 </div>
-                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <!-- Username -->
                 <div class="form-group mb-3">
-                    <label for="Username" class="form-label">Username</label>
-                    <input type="text" id="Username" name="Username" class="form-control" />
+                    <label for="Username" class="form-label">
+                        Username <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" id="Username" name="Username" class="form-control
+                        @((ViewData.ModelState["Username"]?.Errors.Count > 0) ? "is-invalid" : "")" maxlength="30" value="@Model.Username" required />
                     <span asp-validation-for="Username" class="text-danger"></span>
                 </div>
-                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <!-- Birthdate -->
                 <div class="form-group mb-3">
-                    <label for="Birthdate" class="form-label">Birthdate</label>
-                    <input type="date" id="Birthdate" name="Birthdate" class="form-control" />
+                    <label for="Birthdate" class="form-label">
+                        Birthdate <span class="text-danger">*</span>
+                    </label>
+                    <input type="date" id="Birthdate" name="Birthdate" class="form-control
+                        @((ViewData.ModelState["Birthdate"]?.Errors.Count > 0) ? "is-invalid" : "")" value="@Model.Birthdate.ToString("yyyy-MM-dd")" required />
                     <span asp-validation-for="Birthdate" class="text-danger"></span>
                 </div>
-                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <!-- Email -->
                 <div class="form-group mb-3">
-                    <label for="Email" class="form-label">Email</label>
-                    <input type="email" id="Email" name="Email" class="form-control" required autocomplete="username" />
+                    <label for="Email" class="form-label">
+                        Email <span class="text-danger">*</span>
+                    </label>
+                    <input type="email" id="Email" name="Email" class="form-control
+                        @((ViewData.ModelState["Email"]?.Errors.Count > 0) ? "is-invalid" : "")" value="@Model.Email" required autocomplete="username" />
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
+
+                <!-- Password -->
                 <div class="form-group mb-3">
-                    <label for="Password" class="form-label">Password</label>
-                    <input type="password" id="Password" name="Password" class="form-control" required autocomplete="new-password" />
+                    <label for="Password" class="form-label">
+                        Password <span class="text-danger">*</span>
+                    </label>
+                    <input type="password" id="Password" name="Password" class="form-control
+                        @((ViewData.ModelState["Password"]?.Errors.Count > 0) ? "is-invalid" : "")" value="@Model.Password" required autocomplete="new-password" />
                     <span asp-validation-for="Password" class="text-danger"></span>
+                    <div id="passwordStrength" class="mt-2"></div>
                 </div>
+
+                <!-- Confirm Password -->
                 <div class="form-group mb-4">
-                    <label for="ConfirmPassword" class="form-label">Confirm Password</label>
-                    <input type="password" id="ConfirmPassword" name="ConfirmPassword" class="form-control" required autocomplete="new-password" />
+                    <label for="ConfirmPassword" class="form-label">
+                        Confirm Password <span class="text-danger">*</span>
+                    </label>
+                    <input type="password" id="ConfirmPassword" name="ConfirmPassword" class="form-control
+                        @((ViewData.ModelState["ConfirmPassword"]?.Errors.Count > 0) ? "is-invalid" : "")" value="@Model.ConfirmPassword" required autocomplete="new-password" />
                     <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                 </div>
+
+                <!-- Register Button -->
                 <button type="submit" class="btn btn-primary w-100">Register</button>
+
                 <p class="text-center mt-3">
                     Already have an account? <a asp-controller="User" asp-action="Login">Login here</a>
                 </p>
@@ -54,3 +88,49 @@
         </div>
     </div>
 </section>
+
+@section Scripts {
+    <script>
+        // Password Strength Meter
+        document.getElementById('Password').addEventListener('input', function () {
+            const password = this.value;
+            const strength = getPasswordStrength(password);
+            const strengthText = document.getElementById('passwordStrength');
+
+            if (password.length === 0) {
+                strengthText.innerHTML = '';
+                return;
+            }
+
+            const strengthLevel = getPasswordStrength(password);
+            strengthText.innerHTML = `Strength: <strong>${strengthLevel}</strong>`;
+
+            // Add class based on strength
+            strengthText.className = strengthLevel.toLowerCase();
+        });
+
+        function getPasswordStrength(password) {
+            let strength = 'Weak';
+            if (password.length >= 8) {
+                if (/[A-Z]/.test(password) && /[a-z]/.test(password) && /[0-9]/.test(password)) {
+                    strength = 'Strong';
+                } else {
+                    strength = 'Medium';
+                }
+            }
+            return strength;
+        }
+
+        // Confirm Password Validation
+        document.getElementById('ConfirmPassword').addEventListener('input', function () {
+            const confirmPassword = this.value;
+            const password = document.getElementById('Password').value;
+
+            if (confirmPassword !== password) {
+                this.setCustomValidity("Passwords do not match");
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+    </script>
+}
