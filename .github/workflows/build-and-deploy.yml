@@ -1,0 +1,72 @@
+name: MaintenancePortal CI
+
+on:
+  workflow_dispatch:    # Allows manual trigger from the GitHub UI
+  push:
+    branches:
+      - main   # Trigger when pushing to the main branch
+
+env:
+  AZURE_WEBAPP_NAME: IMaintenancePortal   # Name of your Azure Web App
+  DOTNET_VERSION: "9.x"                  # .NET version you're using (update to the correct version, e.g., 8.x or 7.x)
+  SOLUTION_PATH: "MaintenancePortal.sln" # Path to your solution file
+  PUBLISH_DIR: "./publish"               # Directory where the published app will be stored
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest   # Ubuntu is fine for .NET Core build
+
+    steps:
+      # Step 1: Checkout code from GitHub repository
+      - uses: actions/checkout@v4
+
+      # Step 2: Set up .NET SDK
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      # Step 3: Restore dependencies (NuGet)
+      - name: Restore
+        run: dotnet restore ${{ env.SOLUTION_PATH }}
+        
+      # Step 4: Build the app
+      - name: Build
+        run: dotnet build ${{ env.SOLUTION_PATH }} --configuration Release --no-restore
+
+      # Step 5: Run Tests
+      - name: Test
+        run: dotnet test ${{ env.SOLUTION_PATH }} --configuration Release --no-restore --no-build --verbosity normal
+
+      # Step 6: Publish the app
+      - name: Publish
+        run: dotnet publish ${{ env.SOLUTION_PATH }} --configuration Release --no-restore --no-build --output ${{ env.PUBLISH_DIR }}
+
+      # Step 7: Upload Published Artifacts
+      - name: Publish Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: webapp
+          path: ${{ env.PUBLISH_DIR }}
+
+  deploy:
+    name: Deploy to Azure
+    runs-on: ubuntu-latest
+    needs: [build-and-test]   # This job runs after build-and-test completes successfully
+
+    steps:
+      # Step 1: Download artifact from the build job
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: webapp
+          path: ${{ env.PUBLISH_DIR }}
+
+      # Step 2: Deploy to Azure Web App
+      - name: Deploy
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}   # The name of your Azure Web App
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}  # GitHub secret containing the Azure Publish Profile
+          package: ${{ env.PUBLISH_DIR }}  # Path to the published package
