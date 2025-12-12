@@ -2,6 +2,7 @@
 using MaintenancePortal.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -18,68 +19,59 @@ public class TicketController : Controller
     }
 
     [HttpGet]
-    public IActionResult Index(string? query = "", int page = 0, int pageSize = 10)
+    public async Task<IActionResult> Index(bool? ticketState = null, int page = 1, int pageSize = 10)
     {
-        IOrderedQueryable<Ticket> _tickets = _context.Tickets.AsQueryable().OrderByDescending(t => t.Id);
+        return View(await GetPaginatedTickets(ticketState, page, pageSize));
+    }
 
-        var totalOpenItems = _tickets.Count(t => t.State == TicketState.Open);
-        var totalInProgressItems = _tickets.Count(t => t.State == TicketState.InProgress);
-        var totalClosedItems = _tickets.Count(t => t.State == TicketState.Closed);
+    private async Task<TicketPaginationViewModel> GetPaginatedTickets(bool? ticketState = null, int page = 1, int pageSize = 10)
+    {
+        IQueryable<Ticket> _tickets = _context.Tickets.AsQueryable().OrderByDescending(t => t.Id);
 
-        if (query != null && query.Contains("state"))
+        var totalOpenTickets = _tickets.Count(t => t.IsOpen == true);
+        var totalClosedTickets = _tickets.Count(t => t.IsOpen == false);
+
+        if (ticketState != null)
         {
-            if (query.Contains("open"))
+            if (ticketState == true)
             {
-                _tickets = (IOrderedQueryable<Ticket>)_tickets.Where(t => t.State == TicketState.Open);
+                _tickets = (IOrderedQueryable<Ticket>)_tickets.Where(t => t.IsOpen == true);
             }
-
-            if (query.Contains("inprogress"))
+            if (ticketState == false)
             {
-                _tickets = (IOrderedQueryable<Ticket>)_tickets.Where(t => t.State == TicketState.InProgress);
-            }
-
-            if (query.Contains("closed"))
-            {
-                _tickets = (IOrderedQueryable<Ticket>)_tickets.Where(t => t.State == TicketState.Closed);
+                _tickets = (IOrderedQueryable<Ticket>)_tickets.Where(t => t.IsOpen == false);
             }
         }
 
-        var paginationMetadata = new PaginationMetadata()
+        var totalFilteredTickets = await _tickets.CountAsync();
+
+        List<Ticket> tickets = await _tickets
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        TicketPaginationViewModel model = new TicketPaginationViewModel()
         {
-            PageSize = pageSize,
-            Current = page,
-            TotalItems = _tickets.Count(),
-            TotalOpenItems = totalOpenItems,
-            TotalInProgressItems = totalInProgressItems,
-            TotalClosedItems = totalClosedItems
+            Tickets = tickets.Select(ticket => new TicketIndexViewModel()
+            {
+                Id = ticket.Id,
+                Title = ticket.Title,
+                Description = ticket.Description,
+                IsOpen = ticket.IsOpen,
+                CreatedAt = ticket.CreatedAt,
+                ClosedAt = ticket.ClosedAt,
+                UserId = ticket.CreatedById,
+                Username = _context.Users.FirstOrDefault(u => u.Id == ticket.CreatedById)?.UserName!
+            }).ToList(),
+            TicketState = ticketState,
+            CurrentPage = page,
+            TotalPages = (int)Math.Ceiling(totalFilteredTickets / (double)pageSize),
+            TotalOpenTickets = totalOpenTickets,
+            TotalClosedTickets = totalClosedTickets,
+            TotalTickets = await _context.Tickets.CountAsync()
         };
 
-        var pagination = paginationMetadata.GetPageList();
-
-        TicketListViewModel tickets = new TicketListViewModel
-        {
-            Query = query,
-            PaginationMetadata = paginationMetadata,
-            Pagination = pagination,
-            Tickets = _tickets.Skip(page * pageSize)
-                .Take(pageSize)
-                .Select(ticket => new TicketIndexViewModel
-                {
-                    Id = ticket.Id,
-                    Title = ticket.Title,
-                    Description = ticket.Description,
-                    State = ticket.State,
-                    StateDate = (DateTime)(ticket.State == TicketState.Closed ? ticket.ClosedAt! : ticket.CreatedAt),
-                    UserId = ticket.CreatedById,
-                    Username = _context.Users
-                        .Where(u => u.Id == ticket.CreatedById)
-                        .Select(u => u.UserName)
-                        .FirstOrDefault() ?? "Unknown",
-                })
-                .ToList()
-        };
-
-        return View(tickets);
+        return model;
     }
 
     [HttpGet]
@@ -87,7 +79,7 @@ public class TicketController : Controller
     {
         if (id == null)
         {
-            return NotFound();
+            return RedirectToAction("Index");
         }
 
         Ticket? ticket = _context.Tickets.Find(id);
@@ -98,10 +90,10 @@ public class TicketController : Controller
 
         var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        return View(new TicketEditableViewModel()
+        return View(new TicketDetailsViewModel()
         {
             Id = ticket.Id,
-            State = ticket.State,
+            IsOpen = ticket.IsOpen,
             Title = ticket.Title,
             Description = ticket.Description,
             CreatedAt = ticket.CreatedAt,
@@ -117,8 +109,7 @@ public class TicketController : Controller
     }
 
     [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(TicketModifyViewModel model)
+    public async Task<IActionResult> Create(TicketCreateViewModel model)
     {
         if (ModelState.IsValid)
         {
@@ -126,9 +117,9 @@ public class TicketController : Controller
             {
                 Title = model.Title,
                 Description = model.Description,
-                State = TicketState.Open,
+                IsOpen = true,
                 CreatedAt = DateTime.Now,
-                CreatedById = _context.Users.FirstOrDefault(u => u.UserName == User.Identity.Name).Id
+                CreatedById = User.FindFirstValue(ClaimTypes.NameIdentifier)!
             };
 
             _context.Tickets.Add(ticket);
@@ -139,6 +130,7 @@ public class TicketController : Controller
         return View(model);
     }
 
+    [HttpGet]
     public IActionResult Edit(int id)
     {
         var ticket = _context.Tickets.Find(id);
@@ -147,27 +139,19 @@ public class TicketController : Controller
             return NotFound();
         }
 
-        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);  // Get logged-in user ID
-
-        // If user is not the creator, redirect back to details
-        if (ticket.CreatedById != currentUserId)
-        {
-            return Unauthorized();
-        }
-
-        var viewModel = new TicketEditableViewModel
+        var viewModel = new TicketEditViewModel
         {
             Id = ticket.Id,
             Title = ticket.Title,
-            Description = ticket.Description
+            Description = ticket.Description,
+            IsOpen = ticket.IsOpen
         };
 
-        // Return a partial view with the ticket in edit mode
-        return PartialView("_EditTicket", viewModel);
+        return View(viewModel);
     }
 
     [HttpPost]
-    public IActionResult Update(TicketEditableViewModel model)
+    public IActionResult Update(TicketDetailsViewModel model)
     {
         if (ModelState.IsValid)
         {
@@ -177,46 +161,56 @@ public class TicketController : Controller
                 return NotFound();
             }
 
-            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);  // Get logged-in user ID
-
-            // If user is not the creator, reject the update
-            if (ticket.CreatedById != currentUserId)
-            {
-                return Unauthorized();
-            }
-
             // Update ticket with new values
             ticket.Title = model.Title;
             ticket.Description = model.Description;
+            ticket.LastModifiedAt = DateTime.Now;
             _context.SaveChanges();
 
-            // Return the updated details view as a partial view
-            var updatedViewModel = new TicketEditableViewModel
-            {
-                Id = ticket.Id,
-                Title = ticket.Title,
-                Description = ticket.Description,
-                CanEdit = ticket.CreatedById == currentUserId
-            };
-
-            return PartialView("_TicketDetails", updatedViewModel);  // Return updated ticket details as a partial view
+            return RedirectToAction("Details", new { id = ticket.Id });
         }
 
         return BadRequest();  // Return an error if model validation fails
     }
 
     [HttpPost]
-    public IActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
         Ticket? ticket = _context.Tickets.Find(id);
         if (ticket is null)
         {
-            return Json(new { success = false });
+            return NotFound();
         }
 
         _context.Tickets.Remove(ticket);
         _context.SaveChanges();
 
-        return Json(new { success = true, redirectUrl = Url.Action("Index", "Ticket") });
+        return RedirectToAction("Index");
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CloseOrOpen(int id)
+    {
+        Ticket? ticket = await _context.Tickets.FirstOrDefaultAsync(t => t.Id == id);
+        if (ticket == null)
+        {
+            return NotFound();
+        }
+
+        ticket.IsOpen = !ticket.IsOpen;
+        ticket.LastModifiedAt = DateTime.Now;
+        ticket.ClosedAt = ticket.IsOpen ? null : DateTime.Now;
+
+        _context.Tickets.Update(ticket);
+
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction("Details", new { id = ticket.Id });
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Cancel(int id)
+    {
+        return RedirectToAction("Details", new { id = id });
     }
 }
