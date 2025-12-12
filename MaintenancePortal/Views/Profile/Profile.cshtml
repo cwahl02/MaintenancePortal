@@ -1,0 +1,17 @@
+﻿@model UserProfileViewModel
+
+<div class="card-body">
+    <div id="ticketHeader">
+        <div class="view-mode d-flex justify-content-between align-items-center">
+            <h3>@Model.DisplayName</h3>
+            @if (Model.CanEdit)
+            {
+                <a class="btn btn-outline-primary" href="@Url.Action("Edit", "Profile", new { id = Model.Id })">Edit</a>
+            }
+        </div>
+    </div>
+    <p>@@@Model.Username </p>
+    <hr />
+    <p>@Model.Bio</p>
+    <p class="text-muted">Joined @(Model.CreatedAt.ToString("MMMM dd, yyyy"))</p>
+</div>

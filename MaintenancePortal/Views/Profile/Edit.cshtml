@@ -1,0 +1,59 @@
+﻿@model UserEditViewModel
+
+<form method="post" asp-controller="Profile" asp-action="UpdateProfile">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="Id" value="@Model.Id" />
+
+    <div class="mb-3">
+        <label for="DisplayName" class="form-label">Display Name</label>
+        <input type="text" class="form-control" name="DisplayName" value="@Model.DisplayName" required />
+    </div>
+
+    <div class="mb-3">
+        <label for="Bio" class="form-label">Bio</label>
+        <textarea id="Bio" name="Bio" class="form-control" rows="5" maxlength="250" required>@Model.Bio</textarea>
+        <small id="bioCounter" class="form-text text-muted">250 characters remaining</small>
+    </div>
+
+    <div class="mb-3">
+        <label for="FirstName" class="form-label">First Name</label>
+        <input type="text" class="form-control" name="FirstName" value="@Model.FirstName" required />
+    </div>
+
+    <div class="mb-3">
+        <label for="LastName" class="form-label">Last Name</label>
+        <input type="text" class="form-control" name="LastName" value="@Model.LastName" required />
+    </div>
+
+    <div class="mb-3">
+        <label for="Birthdate" class="form-label">Birthdate</label>
+        <input type="date" class="form-control" name="Birthdate" value="@Model.Birthdate?.ToString("yyyy-MM-dd")" required />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+</form>
+
+@section Scripts {
+    <script>
+        // Get the textarea and counter elements
+        const bioTextarea = document.getElementById('Bio');
+        const bioCounter = document.getElementById('bioCounter');
+        const maxLength = bioTextarea.getAttribute('maxlength'); // 500 in this case
+
+        // Function to update the character counter
+        function updateCharacterCount() {
+            const currentLength = bioTextarea.value.length;
+            const remaining = maxLength - currentLength;
+
+            // Update the counter text
+            bioCounter.textContent = `${remaining} characters remaining`;
+        }
+
+        // Run the update on input change
+        bioTextarea.addEventListener('input', updateCharacterCount);
+
+        // Initialize the counter when the page loads
+        updateCharacterCount();
+    </script>
+
+}

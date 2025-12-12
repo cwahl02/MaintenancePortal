@@ -1,57 +1,25 @@
-﻿@model TicketEditableViewModel
+﻿@model TicketDetailsViewModel
 <!-- -->
 
-<section id="ticketContainer">
-    <!-- The content will be injected here by JavaScript -->
-    @await Html.PartialAsync("_TicketDetails", Model)  <!-- Initial render of ticket details -->
-</section>
-
-<script>
-    function editTicket(ticketId) {
-        $.ajax({
-            url: '@Url.Action("Edit", "Ticket")/' + ticketId,
-            type: 'GET',
-            success: function(response) {
-                // Inject the edit form (partial view) into the ticketContainer
-                document.getElementById('ticketContainer').innerHTML = response;
-            },
-            error: function() {
-                alert('An error occurred while loading the edit form.');
+<div class="card-body">
+    <div id="ticketHeader">
+        <div class="view-mode d-flex justify-content-between align-items-center">
+            <h3 id="ticketTitleDisplay">@Model.Title <span class="text-secondary fw-light">#@Model.Id</span></h3>
+            @if (Model.CanEdit)
+            {
+                <a class="btn btn-outline-primary" href="@Url.Action("Edit", "Ticket", new { id = Model.Id })">Edit</a>
             }
-        });
-    }
-
-    function saveTicket() {
-        var updatedTicket = {
-            Id: @Model.Id,
-            Title: document.getElementById('ticketTitle').value,
-            Description: document.getElementById('ticketDescriptionInput').value
-        };
-
-        $.ajax({
-            url: '@Url.Action("Update", "Ticket")',
-            type: 'POST',
-            data: updatedTicket,
-            success: function(response) {
-                // Replace the ticketContainer's content with updated ticket details
-                document.getElementById('ticketContainer').innerHTML = response;
-            },
-            error: function() {
-                alert('An error occurred while saving the ticket.');
-            }
-        });
-    }
-
-    function cancelEdit() {
-        $.ajax({
-            url: '@Url.Action("Details", "Ticket")',
-            type: 'GET',
-            success: function(response) {
-                document.getElementById('ticketContainer').innerHTML = response;
-            },
-            error: function() {
-                alert('An error occurred while cancelling the edit.');
-            }
-        });
-    }
-</script>
+        </div>
+    </div>
+    <hr />
+    <h5>Description</h5>
+    <div id="ticketDescription">
+        <p>@Model.Description</p>
+    </div>
+    <hr />
+    <form action="@Url.Action("CloseOrOpen", "Ticket", new { id = Model.Id })" method="post" class="d-inline">
+        <button type="submit" class="btn btn-primary">
+            @(Model.IsOpen ? "Close Ticket" : "Reopen Ticket")
+        </button>
+    </form>
+</div>

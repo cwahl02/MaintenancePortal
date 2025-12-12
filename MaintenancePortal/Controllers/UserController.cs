@@ -99,9 +99,19 @@ public class UserController : Controller
     {
         if (ModelState.IsValid)
         {
+            // Check if the username already exists
+            var existingUser = await _userManager.FindByNameAsync(model.Username);
+            if (existingUser != null)
+            {
+                // Add a custom error for the Username field
+                ModelState.AddModelError("Username", "The username is already taken.");
+                return View(model);
+            }
+
             User user = new User
             {
                 UserName = model.Username,
+                DisplayName = $"{model.FirstName} {model.LastName}",
                 Email = model.Email,
                 FirstName = model.FirstName,
                 LastName = model.LastName,
@@ -109,6 +119,7 @@ public class UserController : Controller
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
+
             if (result.Succeeded)
             {
                 await _signInManager.SignInAsync(user, isPersistent: false);
@@ -123,4 +134,5 @@ public class UserController : Controller
 
         return View(model);
     }
+
 }

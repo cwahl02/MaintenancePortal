@@ -43,7 +43,9 @@ public class SeedData
                     Email = email,
                     EmailConfirmed = true,
                     FirstName = firstName,
-                    LastName = lastName
+                    LastName = lastName,
+                    DisplayName = $"{firstName} {lastName}",
+                    Bio = $"Hello, I'm {firstName} {lastName}, a user of Maintenance Portal.",
                 };
 
                 // Create the user
@@ -80,7 +82,7 @@ public class SeedData
         // Create 30 tickets (3 pages of 10 tickets)
         for (int i = 1; i <= 30; i++)
         {
-            var state = (TicketState)(i % 3); // Rotate through TicketState values (e.g., Open, InProgress, Closed)
+            bool state = i % 3 == 0; // Rotate through TicketState values (e.g., Open, InProgress, Closed)
 
             // Make sure the CreatedById is valid (i.e., it must refer to a valid user)
             var createdByUser = users[new Random().Next(users.Count)];
@@ -96,9 +98,9 @@ public class SeedData
                 Description = $"This is a description for issue {i}. More details can be found here.",
                 CreatedById = createdByUser.Id, // Assign CreatedById to a valid user
                 CreatedAt = DateTime.Now.AddDays(-new Random().Next(1, 10)), // Random creation date within the last 10 days
-                State = state,
+                IsOpen = state,
                 LastModifiedAt = DateTime.Now.AddDays(-new Random().Next(0, 5)), // Random last modified date within the last 5 days
-                ClosedAt = state == TicketState.Closed ? DateTime.Now.AddDays(-new Random().Next(0, 3)) : null // Set ClosedAt only if state is Closed
+                ClosedAt = state == false ? DateTime.Now.AddDays(-new Random().Next(0, 3)) : null // Set ClosedAt only if state is Closed
             };
 
             tickets.Add(ticket);

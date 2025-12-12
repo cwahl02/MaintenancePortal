@@ -1,0 +1,40 @@
+﻿@model TicketEditViewModel
+
+<form method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="Id" value="@Model.Id" />
+
+    <!-- Ticket Title -->
+    <label for="title">Ticket Title</label>
+    <input type="text" id="title" name="Title" class="form-control" value="@Model.Title" required />
+
+    <!-- Ticket Description -->
+    <label for="description">Description</label>
+    <textarea id="description" name="Description" class="form-control" rows="5" required>@Model.Description</textarea>
+
+    <hr />
+
+    <!-- Buttons for Save, Cancel, and Delete -->
+    <div class="d-flex justify-content-between">
+        <div class="btn-group">
+            <button type="submit" class="btn btn-danger"
+                    asp-controller="Ticket"
+                    asp-action="Delete"
+                    asp-route-id="@Model.Id">
+                Delete
+            </button>
+        </div>
+        <div class="btn-group">
+            <!-- Cancel Button (redirects back to ticket's details)-->
+            <button type="button" class="btn btn-secondary" onclick="window.location.href='/Ticket/Details/@(Model.Id)'">Cancel</button>
+
+            <!-- Save Button (submits the form) -->
+            <button type="submit" class="btn btn-primary"
+                    asp-controller="Ticket"
+                    asp-action="Update"
+                    asp-route-id="@Model.Id">
+                Save
+            </button>
+        </div>
+    </div>
+</form>
