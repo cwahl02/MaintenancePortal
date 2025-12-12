@@ -44,7 +44,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: webapp
-          path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+          path: ${{ env.PUBLISH_DIR }}
 
   deploy:
     name: Deploy to Azure
