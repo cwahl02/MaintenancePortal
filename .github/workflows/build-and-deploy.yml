@@ -4,13 +4,14 @@ on:
   workflow_dispatch:    # Allows manual trigger from the GitHub UI
   push:
     branches:
-      - main   # Trigger when pushing to the main branch
+      - Azure-Deployment   # Trigger when pushing to the main branch
 
 env:
   AZURE_WEBAPP_NAME: IMaintenancePortal   # Name of your Azure Web App
   DOTNET_VERSION: "9.x"                  # .NET version you're using (update to the correct version, e.g., 8.x or 7.x)
   SOLUTION_PATH: "MaintenancePortal.sln" # Path to your solution file
   PUBLISH_DIR: "./publish"               # Directory where the published app will be stored
+  RESOURCE_GROUP: "IMaintenancePortal_group"
   SQL_CONNECTION_STRING: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}  # Connection string from GitHub Secrets
 
 jobs:
@@ -71,12 +72,15 @@ jobs:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}   # The name of your Azure Web App
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}  # GitHub secret containing the Azure Publish Profile
           package: ${{ env.PUBLISH_DIR }}  # Path to the published package
-
-      # Step 3: Set environment variable for the SQL connection string on Azure
+      # Step 3:
+      - name: Set ASP.NET Core Environment to Production
+        run: |
+          az webapp config appsettings set --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group ${{ env.RESOURCE_GROUP }} --settings ASPNETCORE_ENVIRONMENT="Production"
+      # Step 4: Set environment variable for the SQL connection string on Azure
       - name: Set SQL Connection String for Azure Web App
         run: |
           echo "Setting SQL Connection String for the Azure Web App"
-          az webapp config appsettings set --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group <your-resource-group> --settings SQL_CONNECTION_STRING="${{ secrets.AZURE_SQL_CONNECTION_STRING }}"
+          az webapp config appsettings set --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group ${{ env.RESOURCE_GROUP }} --settings SQL_CONNECTION_STRING="${{ secrets.AZURE_SQL_CONNECTION_STRING }}"
         env:
           AZURE_WEBAPP_NAME: ${{ env.AZURE_WEBAPP_NAME }}
           AZURE_SQL_CONNECTION_STRING: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
