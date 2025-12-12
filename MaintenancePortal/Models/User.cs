@@ -12,9 +12,15 @@ public class User : IdentityUser
     [Required, StringLength(64)]
     public required string LastName { get; set; }
 
+    [Required, StringLength(64)]
+    public required string DisplayName { get; set; }
+
+    [StringLength(256)]
+    public string? Bio { get; set; }
+
     [Required, Column(TypeName = "date")]
     public DateTime Birthdate { get; set; }
 
     [Required, Column(TypeName = "datetime2")]
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
 }
