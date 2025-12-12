@@ -2,6 +2,10 @@
 
 namespace MaintenancePortal.Models;
 
+/// <summary>
+/// Represents the data required for a user to log in using a username or email address, password, and an optional
+/// 'remember me' setting.
+/// </summary>
 public class LoginViewModel
 {
     [Required, Display(Name = "Username or Email")]

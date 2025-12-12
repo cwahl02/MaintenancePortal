@@ -2,6 +2,12 @@
 
 namespace MaintenancePortal.Models;
 
+/// <summary>
+/// Represents the data required to register a new user account.
+/// </summary>
+/// <remarks>This view model is typically used to collect user input during the registration process in a web
+/// application. It includes properties for personal information and credentials, and may be used with data validation
+/// attributes to enforce input requirements.</remarks>
 public class RegisterViewModel
 {
     public string FirstName { get; set; }
