@@ -1,6 +1,6 @@
 ﻿# Technologies & Frameworks Used
 
-[← Back to README](README.md) | [← Previous: Features & Roadmap](FEATURES.md) | [Next: Contributing →](CONTRIBUTING.md)
+[← Back to README](README.md) | [← Previous: Features & Roadmap](FEATURES.md)
 
 ---
 
@@ -75,4 +75,4 @@ As the project evolves, we may incorporate:
 
 ---
 
-[← Back to README](README.md) | [← Previous: Features & Roadmap](FEATURES.md) | [Next: Contributing →](CONTRIBUTING.md)
+[← Back to README](README.md) | [← Previous: Features & Roadmap](FEATURES.md)
