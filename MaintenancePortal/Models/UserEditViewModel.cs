@@ -1,5 +1,8 @@
 ﻿namespace MaintenancePortal.Models;
 
+/// <summary>
+/// Represents the data required to edit an existing user profile.
+/// </summary>
 public class UserEditViewModel
 {
     public string? Id { get; set; }

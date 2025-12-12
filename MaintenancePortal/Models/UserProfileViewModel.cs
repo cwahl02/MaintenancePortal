@@ -1,5 +1,8 @@
 ﻿namespace MaintenancePortal.Models;
 
+/// <summary>
+/// Represents a view model containing detailed information for displaying a user's profile.
+/// </summary>
 public class UserProfileViewModel
 {
     public required string Id { get; set; }
