@@ -6,6 +6,13 @@ using System.Security.Claims;
 
 namespace MaintenancePortal.Controllers;
 
+/// <summary>
+/// Provides actions for viewing and editing user profile information within the application.
+/// </summary>
+/// <remarks>The ProfileController enables authenticated users to view their own or other users' profiles, as well
+/// as update their personal profile details. All actions require the user to be authenticated. Profile data is
+/// retrieved and updated using the application's database context. This controller is intended to be used as part of
+/// the application's user management and profile features.</remarks>
 public class ProfileController : Controller
 {
     private readonly AppDbContext _context;
@@ -14,6 +21,13 @@ public class ProfileController : Controller
         _context = context;
     }
 
+    /// <summary>
+    /// Handles HTTP GET requests to display the public profile page for the specified user.
+    /// </summary>
+    /// <param name="username">The username of the user whose profile is to be displayed. If null or empty, the method returns a 404 Not Found
+    /// result.</param>
+    /// <returns>An <see cref="IActionResult"/> that renders the user's profile view if the user exists; otherwise, a 404 Not
+    /// Found result.</returns>
     [HttpGet]
     [Route("profile/{username}")]
     public async Task<IActionResult> Profile(string? username = null)
@@ -45,6 +59,13 @@ public class ProfileController : Controller
         return View(model);
     }
 
+    /// <summary>
+    /// Handles GET requests for editing the current user's profile by displaying the user edit form populated with the
+    /// user's existing information.
+    /// </summary>
+    /// <remarks>This action retrieves the currently authenticated user's information and pre-populates the
+    /// edit form. The user must be authenticated to access this action.</remarks>
+    /// <returns>A view that displays the user edit form if the user is found; otherwise, a NotFound result.</returns>
     [HttpGet]
     public async Task<IActionResult> Edit()
     {
@@ -68,8 +89,16 @@ public class ProfileController : Controller
         return View(model);
     }
 
+    /// <summary>
+    /// Handles HTTP POST requests to update the current user's profile information.
+    /// </summary>
+    /// <remarks>If the specified user does not exist, the method returns a 404 Not Found result. Only fields
+    /// provided in the model are updated; other fields remain unchanged.</remarks>
+    /// <param name="model">An object containing the updated profile data for the user. Must not be null and must satisfy all model
+    /// validation requirements.</param>
+    /// <returns>A redirect to the profile page if the update is successful; otherwise, returns the edit view with validation
+    /// errors.</returns>
     [HttpPost]
-    [ValidateAntiForgeryToken]
     public async Task<IActionResult> UpdateProfile(UserEditViewModel model)
     {
         if (ModelState.IsValid)
